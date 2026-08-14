@@ -48,7 +48,9 @@ dsh-skills delete <name>       # delete (asks for confirmation)
 
 ## Uninstall
 
-`dsh plugin --profile web remove dsh-skill-viewer`, then restart the gateway.
+```bash
+dsh plugin --profile web remove dsh-skill-viewer
+```
 
 
 
