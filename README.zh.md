@@ -2,7 +2,7 @@
 
 [English](README.md)
 
-DSH 插件，可直接在 web 界面快速管理 skill 状态，无需再打开命令行管理。
+DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端加入快捷的技能管理方式。命令行命令请见下文。
 
 <img width="602" height="599" alt="image" src="https://github.com/user-attachments/assets/6ccb50e5-05ce-4264-97e3-4372d096be3e" />
 
