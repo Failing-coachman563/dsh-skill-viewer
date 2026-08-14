@@ -21,6 +21,16 @@ A DSH plugin for managing skills right from the web UI and terminal
    dsh plugin --profile web add github:Fishquito7/dsh-skill-viewer
    ```
 
+   > pnpm v11 security policy: git-hosted dependencies are blocked from running
+   > their prepare build scripts by default. If you see “git-hosted plugins
+   > build on install...”, add the key pnpm printed above under `allowBuilds`
+   > in the profile's `pnpm-workspace.yaml` and re-run; or install from the
+   > release tarball instead (no git involved, no such restriction):
+   >
+   > ```bash
+   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.2.4/dsh-skill-viewer-0.2.4.tgz
+   > ```
+
 2. Restart the gateway
 
    ```bash
