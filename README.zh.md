@@ -1,29 +1,31 @@
 # dsh-webui-skills-viewer
 
-DSH Web UI 插件：在设置面板“插件”下方新增“技能”栏，浏览当前会话的技能目录，支持热启用/停用、删除与添加技能。
-
 [English](README.md)
+
+DSH 插件，可直接在web界面快速管理skill状态，无需再打开命令行管理。
+
+<img width="602" height="599" alt="image" src="https://github.com/user-attachments/assets/6ccb50e5-05ce-4264-97e3-4372d096be3e" />
+
+
+## 功能
+
+- skill卡片列表：预览已注册安装的skill。
+- skill状态：启用、停用状态标签
+- skill管理：开关热启用/停用、删除；skill名称搜索
+- skill添加：选择单文件（`.md`）或目录束（含顶层 `SKILL.md` 的文件夹），不合规内容会被拒绝并提示原因
 
 ## 安装
 
-前置：DSH CLI（`0.1.0-rc.6` 及以上）与 `dsh web`。
-
-1. 安装本包（bundle 层会自动挂载，无需手动编辑组合文件）：
+1. 安装本包
 
    ```bash
    dsh plugin --profile web add github:Fishquito7/dsh-webui-skills-viewer
    ```
 
-2. 重启网关（先停止、再启动 `dsh web`），刷新页面。
-
-> 旧版（0.1.0 及更早）按手动方式安装的用户，请先删除 `cordis.patch.yml` 中的 `skills-viewer` 条目再更新，避免重复挂载。
-
-## 功能
-
-- 技能卡片列表：搜索、启停状态标签、开关热启用/停用、删除
-- 添加技能：选择单文件（`.md`）或目录束（含顶层 `SKILL.md` 的文件夹），不合规内容会被拒绝并提示原因
-- 随包附带 CLI：`dsh-skills list|enable|disable|delete`（热生效，无需重启）
-- 中英双语文案
+2. 重启网关
+   ```bash
+   dsh-restart
+   ```
 
 ## 卸载
 
