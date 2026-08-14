@@ -51,8 +51,6 @@ dsh-skills delete <name>       # 删除（需确认）
 
 `dsh plugin --profile web remove dsh-skill-viewer`，然后重启网关。
 
-> 本插件前身为 `dsh-webui-skills-viewer`；使用旧版手动安装的用户升级前请先移除 `cordis.patch.yml` 中的旧条目，避免重复挂载。
-
 ## License
 
 MIT
