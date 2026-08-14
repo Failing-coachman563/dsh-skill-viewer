@@ -36,7 +36,7 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
    > **或者直接用发行版 tarball 安装（不走 Git，无此限制）：**
    >
    > ```bash
-   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.2.4/dsh-skill-viewer-0.2.4.tgz
+   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.2.6/dsh-skill-viewer-0.2.6.tgz
    > ```
 
 2. 重启网关

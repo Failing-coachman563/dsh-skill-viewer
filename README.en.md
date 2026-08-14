@@ -12,6 +12,7 @@ A DSH plugin for managing skills right from the web UI and terminal
 - Status tags: Enabled / Disabled, styled like the built-in plugin list
 - Management: hot enable/disable switch, delete, search by name; the page refreshes on entry
 - Add skills: choose a single `.md` file or a directory bundle (folder with a top-level `SKILL.md`); invalid content is rejected with a reason
+- **Workspace scoping** (0.2.6): bind a skill to one or more workspaces when adding it (global by default). A workspace-scoped skill is visible only to sessions in those workspaces and is never exposed globally; the skill itself is stored once (`~/.dsh/skills/.system/skill-viewer/<name>/`) and each bound workspace gets a junction under its `.dsh/skills/`. If a workspace is deleted, its junction disappears and the binding is pruned automatically — the skill itself is never lost (the page then shows “0 workspaces”). The card's “Scope” button switches a skill between “global ↔ workspace-limited” anytime.
 
 ## Install
 
@@ -28,7 +29,7 @@ A DSH plugin for managing skills right from the web UI and terminal
    > release tarball instead (no git involved, no such restriction):
    >
    > ```bash
-   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.2.4/dsh-skill-viewer-0.2.4.tgz
+   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.2.6/dsh-skill-viewer-0.2.6.tgz
    > ```
 
 2. Restart the gateway
@@ -44,8 +45,11 @@ A DSH plugin for managing skills right from the web UI and terminal
 The package ships a `dsh-skill` command for terminal-based management (also hot; works while the gateway is down):
 
 ```bash
-dsh-skill list                 # list skills with their state
+dsh-skill list                 # list skills (with state and scope)
 dsh-skill add <path>           # add a skill (a single .md file, or a bundle dir with a top-level SKILL.md)
+dsh-skill add <path> --workspace D:\projA --workspace D:\projB   # limit to workspaces
+dsh-skill scope <name> --global                 # make global
+dsh-skill scope <name> --workspace D:\projA     # limit to workspaces (repeatable)
 dsh-skill disable <name>       # disable
 dsh-skill enable <name>        # enable
 dsh-skill delete <name>        # delete (asks for confirmation)
