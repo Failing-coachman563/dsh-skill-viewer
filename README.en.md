@@ -31,13 +31,14 @@ A DSH plugin for managing skills right from the web UI and terminal
 
 ## CLI
 
-The package ships a `dsh-skills` command for terminal-based management (also hot; works while the gateway is down):
+The package ships a `dsh-skill` command for terminal-based management (also hot; works while the gateway is down):
 
 ```bash
-dsh-skills list                # list skills with their state
-dsh-skills disable <name>      # disable
-dsh-skills enable <name>       # enable
-dsh-skills delete <name>       # delete (asks for confirmation)
+dsh-skill list                 # list skills with their state
+dsh-skill add <path>           # add a skill (a single .md file, or a bundle dir with a top-level SKILL.md)
+dsh-skill disable <name>       # disable
+dsh-skill enable <name>        # enable
+dsh-skill delete <name>        # delete (asks for confirmation)
 ```
 
 ## How it works

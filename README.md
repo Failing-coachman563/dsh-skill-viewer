@@ -32,13 +32,14 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
 
 ## 命令行
 
-随包附带 `dsh-skills` 命令，可直接在终端管理技能（同样热生效，网关关闭时也能用）：
+随包附带 `dsh-skill` 命令，可直接在终端管理技能（同样热生效，网关关闭时也能用）：
 
 ```bash
-dsh-skills list                # 列出技能（含启停状态）
-dsh-skills disable <name>      # 停用
-dsh-skills enable <name>       # 启用
-dsh-skills delete <name>       # 删除（需确认）
+dsh-skill list                 # 列出技能（含启停状态）
+dsh-skill add <path>           # 添加技能（单个 .md 文件或含顶层 SKILL.md 的目录束）
+dsh-skill disable <name>       # 停用
+dsh-skill enable <name>        # 启用
+dsh-skill delete <name>        # 删除（需确认）
 ```
 
 ## 工作原理
