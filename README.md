@@ -1,8 +1,8 @@
 # dsh-skill-viewer
 
-[简体中文](README.zh.md)
+(English|[简体中文](README.zh.md))
 
-A DSH plugin for managing skills right from the web UI — no command line needed.
+A DSH plugin for managing skills right from the web UI and terminal
 
 <img width="602" height="599" alt="image" src="https://github.com/user-attachments/assets/6ccb50e5-05ce-4264-97e3-4372d096be3e" />
 
