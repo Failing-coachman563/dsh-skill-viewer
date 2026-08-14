@@ -43,8 +43,10 @@ dsh-skill delete <name>        # delete (asks for confirmation)
 
 ## How it works
 
-- State changes touch the skill files directly (`SKILL.md` ↔ `SKILL.md.disabled`); DSH's file watcher picks them up instantly — no gateway restart
-- A disabled skill disappears from the `/skill` trigger and the model catalog; it stays listed (dimmed) on the page and can be re-enabled anytime
+The plugin doesn't parse skills itself — it's just a management surface over the skill files: every action in the page (or via `dsh-skill`) ends up as a change to the skill files on disk (`SKILL.md`), and DSH's own file watcher notices immediately. That's why enable/disable, add and delete are all hot — no gateway restart.
+
+- Disable = rename `SKILL.md` to `SKILL.md.disabled`, enable = rename it back
+- A disabled skill leaves the `/skill` trigger and the model catalog; it stays dimmed on the page and can be re-enabled anytime
 - Deployment-bundled skills are read-only: they cannot be disabled or deleted
 
 ## Uninstall
