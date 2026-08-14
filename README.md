@@ -49,7 +49,9 @@ dsh-skills delete <name>       # 删除（需确认）
 
 ## 卸载
 
-`dsh plugin --profile web remove dsh-skill-viewer`，然后重启网关。
+```bash
+dsh plugin --profile web remove dsh-skill-viewer
+```
 
 ## License
 
