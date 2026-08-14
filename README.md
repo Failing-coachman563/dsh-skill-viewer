@@ -8,21 +8,15 @@ A DSH Web UI plugin: adds a **Skills** section below **Plugins** in the settings
 
 Requires DSH CLI (`0.1.0-rc.6`+) and the `web` profile.
 
-1. Install the package:
+1. Install the package (its bundle layer auto-mounts it — no manual composition edits):
 
    ```bash
    dsh plugin --profile web add github:Fishquito7/dsh-webui-skills-viewer
    ```
 
-2. Edit `~/.dsh/profiles/web/cordis.patch.yml` (`%USERPROFILE%\.dsh\profiles\web\cordis.patch.yml` on Windows):
+2. Restart the gateway (stop, then start `dsh web`) and refresh the page.
 
-   ```yaml
-   - insert:
-       - id: skills-viewer
-         name: dsh-webui-skills-viewer
-   ```
-
-3. Restart the gateway (stop, then start `dsh web`) and refresh the page.
+> Users of the old manual install (0.1.0 and earlier): remove the `skills-viewer` entry from your `cordis.patch.yml` before updating, to avoid a duplicate mount.
 
 ## Features
 

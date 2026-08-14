@@ -8,21 +8,15 @@ DSH Web UI 插件：在设置面板“插件”下方新增“技能”栏，浏
 
 前置：DSH CLI（`0.1.0-rc.6` 及以上）与 `dsh web`。
 
-1. 安装本包：
+1. 安装本包（bundle 层会自动挂载，无需手动编辑组合文件）：
 
    ```bash
    dsh plugin --profile web add github:Fishquito7/dsh-webui-skills-viewer
    ```
 
-2. 编辑 `~/.dsh/profiles/web/cordis.patch.yml`（Windows：`%USERPROFILE%\.dsh\profiles\web\cordis.patch.yml`）：
+2. 重启网关（先停止、再启动 `dsh web`），刷新页面。
 
-   ```yaml
-   - insert:
-       - id: skills-viewer
-         name: dsh-webui-skills-viewer
-   ```
-
-3. 重启网关（先停止、再启动 `dsh web`），刷新页面。
+> 旧版（0.1.0 及更早）按手动方式安装的用户，请先删除 `cordis.patch.yml` 中的 `skills-viewer` 条目再更新，避免重复挂载。
 
 ## 功能
 
