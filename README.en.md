@@ -50,7 +50,7 @@ dsh-skills delete <name>       # delete (asks for confirmation)
 
 `dsh plugin --profile web remove dsh-skill-viewer`, then restart the gateway.
 
-> This plugin was formerly named `dsh-webui-skills-viewer`. Users of the old manual install should remove the old entry from their `cordis.patch.yml` before upgrading, to avoid a duplicate mount.
+
 
 ## License
 
