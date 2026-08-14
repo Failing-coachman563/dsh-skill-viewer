@@ -1,0 +1,34 @@
+{
+  "name": "dsh-webui-skills-viewer",
+  "version": "0.1.0",
+  "description": "DSH Web UI plugin: adds a 'Skills' section below 'Plugins' in the settings panel to browse the current session's skill catalog and read skill contents.",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/client.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-locale",
+        "@deepseek-ai/dsh-api-gateway"
+      ]
+    }
+  },
+  "license": "MIT",
+  "bin": {
+    "dsh-skills": "./bin/dsh-skills.js"
+  },
+  "files": [
+    "lib",
+    "bin",
+    "assets",
+    "README.md",
+    "README.zh.md",
+    "LICENSE"
+  ]
+}
