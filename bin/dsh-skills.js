@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * dsh-skills - hot skill management CLI for the dsh-webui-skills-viewer plugin.
+ * dsh-skills - hot skill management CLI for the dsh-skill-viewer plugin.
  *
  * Works directly on the skill files the DSH skill-filesystem provider reads;
  * the running gateway picks changes up through its file watcher (no restart).
