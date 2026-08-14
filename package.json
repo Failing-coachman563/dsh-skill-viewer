@@ -31,7 +31,7 @@
     "bin",
     "assets",
     "README.md",
-    "README.zh.md",
+    "README.en.md",
     "LICENSE",
     "cordis.patch.yml"
   ]
