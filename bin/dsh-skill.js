@@ -121,7 +121,7 @@ async function addSkill(sourceArg, flags, roots, entries) {
   // 2) Destination root.
   const destRoot = flags.project
     ? roots.find((root) => root.source === "project-dsh")?.path
-    : roots.find((root) => root.source === "user-dsh")?.path;
+    : join(userHomes().dshHome, "skills");
   if (destRoot === undefined) throw new Error("找不到目标技能根（--project 需要当前目录锚定一个项目根）");
   const target = kind === "bundle" ? join(destRoot, name) : join(destRoot, basename(source));
 
