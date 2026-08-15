@@ -15,12 +15,11 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
 - skill 状态：启用、停用状态标签，与内置插件列表同款样式
 - skill 管理：开关热启用/停用、删除；按名称搜索；进入页面自动刷新
 - skill 添加：选择单文件（`.md`）或目录束（含顶层 `SKILL.md` 的文件夹），不合规内容会被拒绝并提示原因
-- **工作区作用域**（0.2.6）：添加技能时可指定一个或多个工作区（默认全局）。
-  限定工作区的技能只在这些工作区的会话中可见，不会全局暴露；技能本体只存一份
-  （`~/.dsh/skills/.system/skill-viewer/<name>/`），每个绑定工作区的
-  `.dsh/skills/` 下是一个联接点。工作区被删除后联接点随之消失、绑定自动清理，
-  技能本身不会丢失（在页面中会提示"0 个工作区"）。卡片上的"作用域"按钮可随时
-  把技能在"全局 ↔ 限定工作区"之间切换。
+- **作用域分栏**（0.3.0）：技能实体直接存放在其作用域里——全局在
+  `~/.dsh/skills`，限定工作区在该工作区的 `.dsh/skills`。页面“技能列表”下方
+  有一条作用域横栏（全局 + 各工作区，可横向滚动），点击即只显示该作用域下的技能。
+- **批量迁移**：“+”号左侧的迁移按钮可把一个作用域下的技能批量**复制**或**移动**
+  到另一个作用域（支持全选，逐个迁移、失败不影响其余）。
 
 ## 安装
 
@@ -36,7 +35,7 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
    > **或者直接用发行版 tarball 安装（不走 Git，无此限制）：**
    >
    > ```bash
-   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.2.6/dsh-skill-viewer-0.2.6.tgz
+   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.3.0/dsh-skill-viewer-0.3.0.tgz
    > ```
 
 2. 重启网关
@@ -52,22 +51,27 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
 随包附带 `dsh-skill` 命令，可直接在终端管理技能（同样热生效，网关关闭时也能用）：
 
 ```bash
-dsh-skill list                 # 列出技能（含启停状态与作用域）
-dsh-skill add <path>           # 添加技能（单个 .md 文件或含顶层 SKILL.md 的目录束）
-dsh-skill add <path> --workspace D:\项目A --workspace D:\项目B   # 限定到指定工作区
-dsh-skill scope <name> --global                    # 改为全局
-dsh-skill scope <name> --workspace D:\项目A        # 限定到指定工作区（可重复）
+dsh-skill list                                  # 列出技能（含作用域：全局 / 工作区）
+dsh-skill add <path>                            # 添加到全局（单个 .md 或含顶层 SKILL.md 的目录束）
+dsh-skill add <path> --workspace D:\项目A       # 直接添加到指定工作区
+dsh-skill scope <name> --global                  # 迁移单个技能到全局
+dsh-skill scope <name> --workspace D:\项目A      # 迁移单个技能到指定工作区（--copy 复制）
+dsh-skill migrate <name...|--all> --from <全局|路径> --to <全局|路径> [--copy] [--yes]
+                                                 # 批量迁移（复制/移动）
 dsh-skill disable <name>       # 停用
 dsh-skill enable <name>        # 启用
 dsh-skill delete <name>        # 删除（需确认）
 ```
 
+CLI 只扫描当前目录锚定的项目根与用户根；管理其他工作区的技能请加 `--cwd <工作区路径>`。
+
 ## 工作原理
 
-插件并不自己解析技能，只是技能文件的“管理界面”：页面和 `dsh-skill` 命令的每次操作，最终都是对磁盘上技能文件（`SKILL.md`）的改动，DSH 自带的文件监听器立刻发现变化——所以启用/停用、增删都热生效，无需重启网关。
+插件并不自己解析技能，只是技能文件的“管理界面”：页面和 `dsh-skill` 命令的每次操作，最终都是对磁盘上技能文件（`SKILL.md`）的改动，DSH 自带的文件监听器立刻发现变化——所以启用/停用、增删、迁移都热生效，无需重启网关。
 
+- 技能实体直接存放在其作用域的技能文件夹：全局 = `~/.dsh/skills`，工作区 = `<工作区>/.dsh/skills`，没有隐藏存储或联接点——卸载插件后技能仍是普通文件，照常被 DSH 发现
 - 停用 = 把 `SKILL.md` 改名为 `SKILL.md.disabled`，启用 = 改回来
-- 停用后技能从 `/skill` 触发词与模型目录中消失；页面里仍置灰展示，可随时重新启用
+- 改变作用域 = 真实地把文件复制/移动到目标作用域的文件夹（先校验、失败回滚）
 - 随部署附带的技能（bundled）为只读，不可停用或删除
 
 ## 卸载

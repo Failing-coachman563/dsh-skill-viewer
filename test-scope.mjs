@@ -1,88 +1,155 @@
-import { mkdir, mkdtemp, readFile, readdir, rm, writeFile, lstat, readlink } from "node:fs/promises";
+/**
+ * test-scope.mjs — entity-model scope engine tests (0.3.0).
+ *
+ * Exercises lib/scope.js against real directories in a temp root:
+ * migrateEntry (move/copy, bundle/flat/disabled), batch migration with
+ * per-item failure, duplicate guards, workspace normalization.
+ */
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { join, resolve } from "node:path";
 import { tmpdir } from "node:os";
 import {
-  loadBindings, saveBindings, scopeSkill, normalizeWorkspaces, ensureJunction,
-  removeJunction, deleteScopedSkill, scopedEnabled, setScopedEnabled, scopedContent,
-  storeRoot, userBundleDir, workspaceLink, pruneStaleWorkspaces
+  batchMigrateEntries,
+  migrateEntry,
+  normalizeWorkspace,
+  scopeRootOf,
+  workspaceSkillRoot
 } from "./lib/scope.js";
-import { collectSkillEntries, buildRoots } from "./lib/skill-files.js";
+import { collectSkillEntries, pathExists } from "./lib/skill-files.js";
 
-const base = await mkdtemp(join(tmpdir(), "skv-test-"));
-const dshHome = join(base, "home");
-const ws = join(base, "workspace");
-await mkdir(join(dshHome, "skills"), { recursive: true });
-await mkdir(ws, { recursive: true });
-
-const failures = [];
-function check(label, cond) {
-  console.log((cond ? "PASS" : "FAIL") + "  " + label);
-  if (!cond) failures.push(label);
+let passed = 0;
+let failed = 0;
+function check(cond, label) {
+  if (cond) {
+    passed += 1;
+    console.log("PASS  " + label);
+  } else {
+    failed += 1;
+    console.log("FAIL  " + label);
+  }
+}
+async function rejects(promise, label) {
+  try {
+    await promise;
+    failed += 1;
+    console.log("FAIL  " + label + " (did not throw)");
+  } catch {
+    passed += 1;
+    console.log("PASS  " + label + " (threw as expected)");
+  }
 }
 
-// 1) a global bundle skill
-const skillName = "demo-skill";
-const skillBody = "---\nname: demo-skill\ndescription: 演示技能\n---\n\n# body\n";
-await mkdir(join(dshHome, "skills", skillName), { recursive: true });
-await writeFile(join(dshHome, "skills", skillName, "SKILL.md"), skillBody, "utf8");
+const root = join(tmpdir(), "dsh-skill-scope-test-" + process.pid);
+const home = join(root, "home");
+const wsA = join(root, "wsA");
+const wsB = join(root, "wsB");
+const homeSkills = join(home, "skills");
+const wsASkills = workspaceSkillRoot(wsA);
+const wsBSkills = workspaceSkillRoot(wsB);
 
-// 2) scope to one workspace
-const entry = { file: join(dshHome, "skills", skillName, "SKILL.md"), dirBundle: true, enabled: true, source: "user-dsh" };
-await scopeSkill(dshHome, skillName, [ws], entry);
-check("store dir exists after scoping", await (async () => { try { await lstat(storeRoot(dshHome) + "/" + skillName); return true; } catch { return false; } })());
-check("user root dir moved away", !(await (async () => { try { await lstat(userBundleDir(dshHome, skillName)); return true; } catch { return false; } })()));
-check("junction created in workspace", await (async () => { try { const st = await lstat(workspaceLink(ws, skillName)); return st.isSymbolicLink(); } catch { return false; } })());
-const viaLink = await readFile(join(ws, ".dsh", "skills", skillName, "SKILL.md"), "utf8");
-check("content readable through junction", viaLink.includes("demo-skill"));
-const bindings = await loadBindings(dshHome);
-check("binding recorded", bindings[skillName]?.workspaces?.includes(ws));
+async function makeBundle(dir, name, desc, disabled) {
+  const d = join(dir, name);
+  await mkdir(join(d, "assets"), { recursive: true });
+  await writeFile(join(d, "SKILL" + (disabled ? ".md.disabled" : ".md")),
+    "---\nname: " + name + "\ndescription: " + desc + "\n---\n\n# " + name + "\n");
+  await writeFile(join(d, "assets", "note.txt"), "asset-of-" + name + "\n");
+  return d;
+}
 
-// 3) discovery simulation: collectSkillEntries over project roots of ws
-const roots = await buildRoots(ws, { dshHome: join(base, "agents-home"), agentsHome: join(base, "agents-home-2") });
-const found = await collectSkillEntries(roots);
-check("provider-style scan finds it under project root", found.some((e) => e.name === skillName && e.enabled));
+async function main() {
+  await rm(root, { recursive: true, force: true });
+  await mkdir(homeSkills, { recursive: true });
+  await mkdir(join(wsA), { recursive: true });
+  await mkdir(join(wsB), { recursive: true });
 
-// 4) enable/disable in store
-await setScopedEnabled(dshHome, skillName, false);
-check("scopedEnabled false after disable", !(await scopedEnabled(dshHome, skillName)));
-await setScopedEnabled(dshHome, skillName, true);
-check("scopedEnabled true after enable", await scopedEnabled(dshHome, skillName));
+  // 1) move a global bundle into workspace A
+  await makeBundle(homeSkills, "demo-move", "move test");
+  const entries1 = await collectSkillEntries([{ path: homeSkills, source: "user-dsh" }]);
+  const demoMove = entries1.find((e) => e.name === "demo-move");
+  await migrateEntry(demoMove, wsASkills, "move");
+  check(await pathExists(join(wsASkills, "demo-move", "SKILL.md")), "bundle moved into workspace");
+  check(await pathExists(join(wsASkills, "demo-move", "assets", "note.txt")), "bundle asset copied along");
+  check(!(await pathExists(join(homeSkills, "demo-move"))), "source removed after move");
+  check((await readFile(join(wsASkills, "demo-move", "assets", "note.txt"), "utf8")).includes("asset-of-demo-move"), "content preserved");
 
-// 5) content
-check("scopedContent reads body", (await scopedContent(dshHome, skillName))?.includes("# body"));
+  // 2) copy a global bundle into workspace A (source kept)
+  await makeBundle(homeSkills, "demo-copy", "copy test");
+  const entries2 = await collectSkillEntries([{ path: homeSkills, source: "user-dsh" }]);
+  const demoCopy = entries2.find((e) => e.name === "demo-copy");
+  await migrateEntry(demoCopy, wsASkills, "copy");
+  check(await pathExists(join(wsASkills, "demo-copy", "SKILL.md")), "copy landed in workspace");
+  check(await pathExists(join(homeSkills, "demo-copy", "SKILL.md")), "copy keeps the source");
 
-// 6) back to global
-await scopeSkill(dshHome, skillName, null);
-check("restored to user root", await (async () => { try { await lstat(join(dshHome, "skills", skillName, "SKILL.md")); return true; } catch { return false; } })());
-check("junction removed", !(await (async () => { try { await lstat(workspaceLink(ws, skillName)); return true; } catch { return false; } })()));
-check("binding removed", (await loadBindings(dshHome))[skillName] === undefined);
+  // 3) flat skill move (original file name preserved)
+  const flatFile = join(homeSkills, "my-flat-skill.md");
+  await writeFile(flatFile, "---\nname: flat-move\ndescription: flat test\n---\n\nbody\n");
+  const entries3 = await collectSkillEntries([{ path: homeSkills, source: "user-dsh" }]);
+  const flatEntry = entries3.find((e) => e.name === "flat-move");
+  await migrateEntry(flatEntry, wsBSkills, "move");
+  check(await pathExists(join(wsBSkills, "my-flat-skill.md")), "flat file moved with original name");
+  check(!(await pathExists(flatFile)), "flat source removed");
 
-// 7) flat skill scoping + fileName restore
-await writeFile(join(dshHome, "skills", "my-flat.md"), "---\nname: my-flat\ndescription: 平铺技能\n---\n\nflat body\n", "utf8");
-await scopeSkill(dshHome, "my-flat", [ws], { file: join(dshHome, "skills", "my-flat.md"), dirBundle: false, enabled: true, source: "user-dsh" });
-check("flat stored as SKILL.md bundle", await (async () => { try { await lstat(join(storeRoot(dshHome), "my-flat", "SKILL.md")); return true; } catch { return false; } })());
-await scopeSkill(dshHome, "my-flat", null);
-check("flat restored with original file name", await (async () => { try { await lstat(join(dshHome, "skills", "my-flat.md")); return true; } catch { return false; } })());
-check("flat store cleaned", !(await (async () => { try { await lstat(join(storeRoot(dshHome), "my-flat")); return true; } catch { return false; } })()));
+  // 4) disabled bundle keeps its disabled state when moved
+  await makeBundle(homeSkills, "demo-disabled", "disabled test", true);
+  const entries4 = await collectSkillEntries([{ path: homeSkills, source: "user-dsh" }]);
+  const disabledEntry = entries4.find((e) => e.name === "demo-disabled");
+  await migrateEntry(disabledEntry, wsASkills, "move");
+  check(await pathExists(join(wsASkills, "demo-disabled", "SKILL.md.disabled")), "disabled state preserved after move");
+  check(!(await pathExists(join(wsASkills, "demo-disabled", "SKILL.md"))), "moved bundle is still disabled");
 
-// 8) workspace deletion pruning
-await scopeSkill(dshHome, skillName, [ws], { file: join(dshHome, "skills", skillName, "SKILL.md"), dirBundle: true, enabled: true, source: "user-dsh" });
-await rm(ws, { recursive: true, force: true });
-const b2 = await loadBindings(dshHome);
-await pruneStaleWorkspaces(dshHome, b2);
-check("stale workspace pruned", b2[skillName]?.workspaces?.length === 0);
-check("skill itself retained in store", await (async () => { try { await lstat(join(storeRoot(dshHome), skillName)); return true; } catch { return false; } })());
+  // 5) duplicate at target → rejected, source intact
+  await makeBundle(homeSkills, "demo-move", "move test duplicate");
+  const entries5 = await collectSkillEntries([{ path: homeSkills, source: "user-dsh" }]);
+  const dupEntry = entries5.find((e) => e.name === "demo-move");
+  await rejects(migrateEntry(dupEntry, wsASkills, "move"), "duplicate target rejected");
+  check(await pathExists(join(homeSkills, "demo-move", "SKILL.md")), "source intact after rejection");
+  await rm(join(homeSkills, "demo-move"), { recursive: true, force: true });
 
-// 9) normalizeWorkspaces errors on missing dir
-let threw = false;
-try { await normalizeWorkspaces([join(base, "nope")]); } catch { threw = true; }
-check("normalizeWorkspaces rejects missing dir", threw);
+  // 6) same-location no-op rejected
+  const wsEntries = await collectSkillEntries([{ path: wsASkills, source: "project-dsh", projectRoot: wsA }]);
+  const sameEntry = wsEntries.find((e) => e.name === "demo-copy");
+  await rejects(migrateEntry(sameEntry, wsASkills, "move"), "same-location move rejected");
 
-// 10) deleteScopedSkill
-await deleteScopedSkill(dshHome, skillName);
-check("deleteScopedSkill removes store", !(await (async () => { try { await lstat(join(storeRoot(dshHome), skillName)); return true; } catch { return false; } })()));
-check("deleteScopedSkill removes binding", (await loadBindings(dshHome))[skillName] === undefined);
+  // 7) batch: one ok, one conflict, one ok — conflict does not abort the rest
+  await makeBundle(wsBSkills, "batch-conflict", "already in target");
+  await makeBundle(homeSkills, "batch-conflict", "conflict source copy");
+  await makeBundle(homeSkills, "batch-ok-1", "batch one");
+  await makeBundle(homeSkills, "batch-ok-2", "batch two");
+  const homeEntries = await collectSkillEntries([{ path: homeSkills, source: "user-dsh" }]);
+  const batchItems = ["batch-ok-1", "batch-conflict", "batch-ok-2"].map((n) => homeEntries.find((e) => e.name === n)).filter(Boolean);
+  const results = await batchMigrateEntries(batchItems, wsBSkills, "move");
+  check(results.length === 3, "batch returns one result per item");
+  check(results[0].ok === true && results[2].ok === true, "batch ok items migrated");
+  check(results[1].ok === false && typeof results[1].error === "string", "batch conflict item failed with message");
+  check(await pathExists(join(wsBSkills, "batch-ok-1", "SKILL.md")) && await pathExists(join(wsBSkills, "batch-ok-2", "SKILL.md")), "batch ok items landed");
+  check(!(await pathExists(join(homeSkills, "batch-ok-1"))) && !(await pathExists(join(homeSkills, "batch-ok-2"))), "batch ok sources removed");
+  check(await pathExists(join(homeSkills, "batch-conflict", "SKILL.md")), "conflict source untouched");
 
-await rm(base, { recursive: true, force: true }).catch(() => {});
-console.log(failures.length === 0 ? "ALL TESTS PASSED" : failures.length + " FAILURES: " + failures.join(" | "));
-process.exit(failures.length === 0 ? 0 : 1);
+  // 8) move back workspace → global
+  const backEntry = (await collectSkillEntries([{ path: wsBSkills, source: "project-dsh", projectRoot: wsB }])).find((e) => e.name === "flat-move");
+  await migrateEntry(backEntry, homeSkills, "move");
+  check(await pathExists(join(homeSkills, "my-flat-skill.md")), "moved back to global root");
+  check(!(await pathExists(join(wsBSkills, "my-flat-skill.md"))), "workspace copy removed after move back");
+
+  // 9) scope roots
+  check(resolve(scopeRootOf(null, home)) === resolve(homeSkills), "scopeRootOf(null) = user root");
+  check(resolve(scopeRootOf(wsA, home)) === resolve(wsASkills), "scopeRootOf(path) = workspace .dsh/skills");
+
+  // 10) workspace normalization
+  await rejects(normalizeWorkspace(join(root, "missing-dir")), "normalizeWorkspace rejects missing dir");
+  await mkdir(join(wsA, ".git"), { recursive: true });
+  await mkdir(join(wsA, "sub"), { recursive: true });
+  const norm = await normalizeWorkspace(join(wsA, "sub"));
+  check(resolve(norm) === resolve(wsA), "workspace resolves to its git project root");
+
+  await rm(root, { recursive: true, force: true });
+  console.log("---");
+  console.log(passed + " passed, " + failed + " failed");
+  if (failed > 0) process.exit(1);
+  console.log("ALL TESTS PASSED");
+}
+
+main().catch((error) => {
+  console.error(error);
+  process.exit(1);
+});
