@@ -1,6 +1,6 @@
 # dsh-skill-viewer
 
-([English](README.en.md)|简体中文)
+[English](README.en.md) | 简体中文
 
 
 DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端加入快捷的skill管理命令。命令行命令请见下文
