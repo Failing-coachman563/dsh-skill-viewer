@@ -21,24 +21,22 @@ import {
 } from "./scope.js";
 
 /**
- * dsh-skill-viewer - host half.
+ * dsh-skill-viewer —— 宿主半区。
  *
- * A Typert Remote service ("skillsViewer") exposing the skill catalog and hot
- * management operations: enable/disable (rename to/from *.disabled), delete,
- * add (import a skill bundle or flat markdown file), and migration between
- * scopes.
+ * 一个 Typert 远程服务（"skillsViewer"），对外暴露技能目录与热管理操作：
+ * 启用/停用（*.disabled 改名）、删除、添加（导入目录束或单文件技能）、
+ * 以及作用域之间的迁移。
  *
- * Entity model (0.3.0): a skill's files live directly in the skill folder of
- * its scope — the global user root (~/.dsh/skills) or a workspace's project
- * root (<workspace>/.dsh/skills). There is no central store, no junction and
- * no plugin-private state: what a session sees is exactly what the
- * skill-filesystem provider discovers in its roots. The watcher picks every
- * change up within ~200ms, so none of these operations require a restart.
+ * 实体模型（0.3.0）：技能文件直接存放在其作用域的技能文件夹——
+ * 全局用户根（~/.dsh/skills）或某工作区的项目根（<workspace>/.dsh/skills）。
+ * 没有中心仓库、没有联接点、没有插件私有状态：会话看到什么，完全等于
+ * 技能文件系统提供方在各根目录里发现的东西。监听器约 200ms 内热感知
+ * 变化，因此以上所有操作都无需重启。
  */
 export const name = "skills-viewer";
 export const inject = ["typert", "skills", "sessions", "agents"];
 
-// ── wire schemas (zod v4) ────────────────────────────────────────────────────
+// ── wire 模式（zod v4）───────────────────────────────────────────────────
 
 const sessionIdSchema = z.string().optional();
 
@@ -115,7 +113,7 @@ const addPayloadSchema = z.object({
 });
 const addResultSchema = z.object({ name: z.string(), kind: z.enum(["bundle", "flat"]), scope: scopeSchema });
 
-/** Typed wire descriptors registered with the API gateway. */
+/** 注册到 API 网关的类型化 wire 描述符。 */
 const MANIFEST = {
   package: "dsh-skill-viewer",
   face: "host",
@@ -219,25 +217,25 @@ const MANIFEST = {
   model: { services: [], events: [], objects: [] }
 };
 
-/** Guard rails for browser-uploaded bundles. */
+/** 浏览器上传目录束的护栏。 */
 const MAX_ADD_FILES = 200;
 const MAX_ADD_TOTAL_BYTES = 8 * 1024 * 1024;
 
 /**
- * The remote service instance. Constructing it registers the "skillsViewer"
- * cordis service; the manifest above lets the API gateway dispatch endpoints.
+ * 远程服务实例。构造它即注册 "skillsViewer" cordis 服务；上面的 manifest
+ * 让 API 网关可以分发端点。
  */
 class SkillsViewerGateway extends TypertRemoteService {
   constructor(ctx) {
     super(ctx, "skillsViewer");
   }
 
-  /** Untyped access to the dynamic harness context (sessions/agents/typert). */
+  /** 对动态 harness 上下文（sessions/agents/typert）的无类型访问桥。 */
   get C() {
     return this.ctx as any;
   }
 
-  // ── catalog resolution (mirrors the host api-proxy skill.list) ─────────────
+  // ── 目录解析（镜像宿主 api-proxy 的 skill.list）────────────────────────
 
   registryFor(sessionId) {
     const live = sessionId === undefined ? undefined : this.C.agents.get(sessionId);
@@ -262,7 +260,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     };
   }
 
-  /** Whether a candidate path lives inside a base directory. */
+  /** 判断候选路径是否位于某基准目录内。 */
   isWithin(baseDir, candidate) {
     if (typeof candidate !== "string" || candidate === "") return false;
     const base = resolvePath(baseDir);
@@ -274,7 +272,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     return v.startsWith(b.endsWith(sep) ? b : b + sep);
   }
 
-  /** Every management root: user roots + one project pair per known workspace. */
+  /** 全部管理根：用户根 + 每个已知工作区的一对项目根。 */
   async allRoots() {
     const { dshHome, agentsHome } = this.homes();
     const roots: any[] = [];
@@ -295,12 +293,12 @@ class SkillsViewerGateway extends TypertRemoteService {
     return roots;
   }
 
-  /** All file-level entries across user roots and every known workspace. */
+  /** 用户根与所有已知工作区里的全部文件级条目。 */
   async fileEntriesAll() {
     return collectSkillEntries(await this.allRoots());
   }
 
-  /** The project root owning a registry skill path, when it is a workspace file. */
+  /** 注册表技能路径属于某工作区文件时，其所属的项目根。 */
   workspaceOfPath(path, roots) {
     if (typeof path !== "string" || path === "") return undefined;
     for (const root of roots) {
@@ -321,22 +319,21 @@ class SkillsViewerGateway extends TypertRemoteService {
     return { kind: "workspace", path: targetProject, label: basename(targetProject) || targetProject };
   }
 
-  // ── remote methods ─────────────────────────────────────────────────────────
+  // ── 远程方法 ─────────────────────────────────────────────────────────────
 
-  /** The catalog: registry skills (global) + every file entry tagged by scope. */
+  /** 目录：注册表技能（全局）+ 按作用域打标的每条文件条目。 */
   async list(sessionId) {
     const { registry, cwd, scope } = this.viewFor(sessionId);
     const roots = await this.allRoots();
     const listed = await registry.list({ cwd, scope });
     const skills: any[] = [];
-    // Dedupe by (name, scope) — not by name alone: the same skill may exist
-    // both globally and inside a workspace, and each row must stay visible
-    // under its own scope chip.
+    // 按（名称, 作用域）去重——不能只按名称：同一技能可能同时存在于全局
+    // 和某个工作区，两行都必须出现在各自的作用域芯片下。
     const seen = new Set();
     const seenKey = (name, scopePath) => name + "\u0000" + (scopePath ?? "global");
     for (const skill of listed) {
-      // Workspace file skills are covered by the file scan below; the
-      // registry row only reflects the current session's project view.
+      // 工作区文件技能由下面的文件扫描兜底；注册表行只反映当前会话的
+      // 项目视图。
       if (this.workspaceOfPath(skill.path, roots) !== undefined) continue;
       const source = skill.source ?? (skill.provider === "runtime" ? "runtime" : "");
       skills.push({
@@ -371,7 +368,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     return { skills };
   }
 
-  /** Distinct project roots of all known workspaces (for the scope bar). */
+  /** 所有已知工作区的互不相同的项目根（供作用域横栏使用）。 */
   async workspaces() {
     const map = new Map();
     const keyOf = (path) => process.platform === "win32" ? path.toLowerCase() : path;
@@ -394,13 +391,13 @@ class SkillsViewerGateway extends TypertRemoteService {
           try {
             if ((await workspace.status()) !== "ok") continue;
           } catch {
-            // status probe unavailable: keep the record
+            // 状态探测不可用：保留记录
           }
           await add(workspace.path, workspace.title, Array.isArray(workspace.sessionIds) ? workspace.sessionIds.length : 0);
         }
       }
     } catch {
-      // registry unavailable: fall back to live sessions below
+      // 注册表不可用：回退到下面的在线会话
     }
     try {
       for (const session of this.C.sessions.list()) {
@@ -409,12 +406,12 @@ class SkillsViewerGateway extends TypertRemoteService {
         await add(resolvePath(cwd), undefined, 1);
       }
     } catch {
-      // session listing unavailable: empty picker
+      // 会话列表不可用：返回空选择器
     }
     return { workspaces: [...map.values()].sort((a, b) => a.label.localeCompare(b.label) || a.path.localeCompare(b.path)) };
   }
 
-  /** Locate a skill: live registry row, plain file entry, or missing. */
+  /** 定位技能：注册表在线行、普通文件条目，或不存在。 */
   async locate(name, sessionId) {
     const { registry, cwd, scope } = this.viewFor(sessionId);
     const skill = await registry.get(name, { cwd, scope });
@@ -424,7 +421,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     return { kind: "missing" };
   }
 
-  /** Full body: the registry definition, or the raw skill file on disk. */
+  /** 完整正文：注册表定义，或磁盘上的技能原文件。 */
   async content(name, sessionId) {
     const located = await this.locate(name, sessionId);
     if (located.kind === "missing") return null;
@@ -455,7 +452,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     if (typeof skill.path !== "string" || skill.path.length === 0) throw new Error('技能 "' + skill.name + '" 没有可修改的文件');
   }
 
-  /** Hot enable/disable: rename the skill file to/from *.disabled in place. */
+  /** 热启用/停用：把技能文件原地改名 *.disabled（或改回）。 */
   async setEnabled(name, sessionId, enabled) {
     const located = await this.locate(name, sessionId);
     if (located.kind === "missing") throw new Error('技能 "' + name + '" 不存在');
@@ -476,7 +473,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     return { name, enabled };
   }
 
-  /** Delete a skill permanently (bundle directories remove the whole dir). */
+  /** 永久删除技能（目录束连目录一起删）。 */
   async deleteSkill(name, sessionId) {
     const located = await this.locate(name, sessionId);
     if (located.kind === "missing") throw new Error('技能 "' + name + '" 不存在');
@@ -493,7 +490,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     return { name };
   }
 
-  /** The entry (or user-root live skill) that migration may move around. */
+  /** 迁移可以挪动的条目（或用户根里的在线技能）。 */
   async migratableEntry(name, sessionId) {
     const entry = winnerEntry(await this.fileEntriesAll(), name);
     if (entry !== undefined) return entry;
@@ -508,7 +505,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     return { name: skill.name, file: skill.path, dirBundle: basename(skill.path) === "SKILL.md", enabled: true, source: skill.source ?? "user-dsh" };
   }
 
-  /** Move or copy one skill into another scope folder. */
+  /** 把单个技能移动或复制到另一个作用域文件夹。 */
   async migrate(name, sessionId, payload) {
     const { target: rawTarget, mode } = payload;
     const { dshHome } = this.homes();
@@ -520,7 +517,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     return { name, scope: this.scopeForTarget(targetRoot, targetProject) };
   }
 
-  /** Migrate a batch of skills into one or more target scopes; per-item results. */
+  /** 把一批技能迁移到一个或多个目标作用域；逐条返回结果。 */
   async batchMigrate(sessionId, payload) {
     const { from: rawFrom, targets: rawTargets, mode, names } = payload;
     if (mode === "move" && rawTargets.length > 1) throw new Error("移动模式只能选择一个目标作用域（多个目标请改用复制）");
@@ -554,12 +551,11 @@ class SkillsViewerGateway extends TypertRemoteService {
   }
 
   /**
-   * Import a new skill directly into a scope folder:
-   *   workspace absent/null → the global user root
-   *   workspace given     → <workspaceProjectRoot>/.dsh/skills
-   * Frontmatter is validated before writing; afterwards the registry is
-   * polled to confirm DSH accepted the skill — otherwise the files are
-   * rolled back and the rejection is reported.
+   * 把新技能直接导入某个作用域文件夹：
+   *   workspace 缺省/为 null → 全局用户根
+   *   workspace 给了路径   → <workspaceProjectRoot>/.dsh/skills
+   * 写入前先校验 frontmatter；随后轮询注册表确认 DSH 已接收该技能——
+   * 否则回滚文件并报告拒绝原因。
    */
   async addSkill(sessionId, payload) {
     const { kind, files, workspace: rawWorkspace } = payload;
@@ -571,7 +567,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     });
     if (decoded.reduce((sum, file) => sum + file.data.length, 0) > MAX_ADD_TOTAL_BYTES) throw new Error("技能总大小超过 8MB 上限");
 
-    // Reject unsafe relative paths up front.
+    // 提前拒绝不安全的相对路径。
     for (const file of decoded) {
       if (file.path.startsWith("/") || file.path.split("/").some((segment) => segment === ".." || segment === ".")) throw new Error("非法文件路径：" + file.path);
     }
@@ -586,7 +582,7 @@ class SkillsViewerGateway extends TypertRemoteService {
       targetRoot = workspaceSkillRoot(targetProject);
     }
 
-    // Determine the canonical skill name and the files to write.
+    // 确定规范技能名与待写入文件。
     let name;
     let writes;
     if (kind === "bundle") {
@@ -610,13 +606,13 @@ class SkillsViewerGateway extends TypertRemoteService {
       writes = [{ relative: flatName, data: file.data }];
     }
 
-    // Refuse duplicates: the name may not exist enabled or disabled anywhere.
+    // 拒绝重名：该名称不得在任何位置以启用或停用状态存在。
     const existing = winnerEntry(await this.fileEntriesAll(), name);
     if (existing !== undefined) throw new Error('同名技能 "' + name + '" 已存在（' + (existing.enabled ? "已启用" : "已停用") + "，位于 " + (existing.projectRoot !== undefined ? existing.projectRoot : "全局用户根") + "）");
     const { registry, cwd, scope } = this.viewFor(sessionId);
     if ((await registry.list({ cwd, scope })).some((skill) => skill.name === name)) throw new Error('同名技能 "' + name + '" 已存在');
 
-    // Write the files (staged in the target root, then renamed into place).
+    // 写入文件（在目标根内暂存，随后改名就位）。
     const target = kind === "bundle" ? join(targetRoot, name) : join(targetRoot, writes[0].relative);
     const staging = join(targetRoot, ".dsh-skill-staging-" + process.pid + "-" + Math.random().toString(36).slice(2, 8));
     try {
@@ -640,8 +636,8 @@ class SkillsViewerGateway extends TypertRemoteService {
       throw new Error("写入技能文件失败（已回滚）：" + (error instanceof Error ? error.message : String(error)));
     }
 
-    // Let DSH itself be the final judge: poll the registry until the skill
-    // shows up in the target scope. Roll back when it never does.
+    // 让 DSH 做最终裁判：轮询注册表直到技能出现在目标作用域。
+    // 一直不出现就回滚。
     const accepted = await this.waitForDiscovery(name, sessionId, targetProject ?? cwd);
     if (!accepted) {
       await rm(target, { recursive: true, force: true }).catch(() => {});
@@ -657,7 +653,7 @@ class SkillsViewerGateway extends TypertRemoteService {
       try {
         if ((await registry.get(name, { cwd: probeCwd, scope })) !== undefined) return true;
       } catch {
-        // registry unavailable: treat as accepted (nothing to verify against)
+        // 注册表不可用：视为已接收（没有可核对的依据）
         return true;
       }
     }

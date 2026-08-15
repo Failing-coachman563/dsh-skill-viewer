@@ -1,26 +1,25 @@
 #!/usr/bin/env node
 /**
- * dsh-skill - hot skill management CLI for the dsh-skill-viewer plugin.
+ * dsh-skill —— dsh-skill-viewer 插件的热管理命令行。
  *
- * Works directly on the skill files the DSH skill-filesystem provider reads;
- * the running gateway picks changes up through its file watcher (no restart).
+ * 直接操作 DSH 技能文件系统提供方读取的技能文件；运行中的网关通过文件
+ * 监听器热感知变化（无需重启）。
  *
- * Entity model (0.3.0): a skill lives in exactly one scope folder —
- *   - global:    ~/.dsh/skills
- *   - workspace: <workspaceProjectRoot>/.dsh/skills
+ * 实体模型（0.3.0）：一个技能只存在于一个作用域文件夹——
+ *   - 全局：    ~/.dsh/skills
+ *   - 工作区：  <workspaceProjectRoot>/.dsh/skills
  *
- *   dsh-skill list                     list skills with their scope
- *   dsh-skill enable <name>            re-enable a disabled skill
- *   dsh-skill disable <name>           hot-disable a skill (rename to *.disabled)
- *   dsh-skill delete <name> [--yes]    delete a skill permanently
- *   dsh-skill add <path>               add a skill (.md file, or a bundle dir
- *                                      whose top level contains SKILL.md)
- *   dsh-skill scope <name>             migrate one skill: --global | --workspace <path>
- *   dsh-skill migrate <name...>        batch migrate: --from --to [--copy] [--all]
- *   --cwd <path>                       project root anchor (default: current dir)
- *   --project                          add into the project root instead of ~/.dsh/skills
- *   --workspace <path>                 target workspace for add/scope
- *   --copy                             copy instead of move
+ *   dsh-skill list                     列出技能（含作用域）
+ *   dsh-skill enable <name>            重新启用已停用的技能
+ *   dsh-skill disable <name>           热停用技能（改名 *.disabled）
+ *   dsh-skill delete <name> [--yes]    永久删除技能
+ *   dsh-skill add <path>               添加技能（.md 文件或含顶层 SKILL.md 的目录束）
+ *   dsh-skill scope <name>             迁移单个技能：--global | --workspace <path>
+ *   dsh-skill migrate <name...>        批量迁移：--from --to [--copy] [--all]
+ *   --cwd <path>                       项目根锚点（默认当前目录）
+ *   --project                          添加到项目根而非 ~/.dsh/skills
+ *   --workspace <path>                 add/scope 的目标工作区
+ *   --copy                             复制而非移动
  */
 import { copyFile, mkdir, readdir, readFile, rename, rm, stat } from "node:fs/promises";
 import { basename, dirname, join, resolve } from "node:path";
@@ -74,7 +73,7 @@ async function confirm(question) {
   return answer === "y" || answer === "yes";
 }
 
-/** Resolve the user roots the same way the host plugin does. */
+/** 以与宿主插件相同的方式解析用户根目录。 */
 function userHomes() {
   const dshHome = resolve(process.env.DSH_HOME && process.env.DSH_HOME.trim() ? process.env.DSH_HOME : join(homedir(), ".dsh"));
   const agentsHome = resolve(process.env.DSH_AGENTS_HOME && process.env.DSH_AGENTS_HOME.trim() ? process.env.DSH_AGENTS_HOME : join(homedir(), ".agents"));
@@ -82,9 +81,8 @@ function userHomes() {
 }
 
 /**
- * Recursively list regular files under a directory as { full, relative } with
- * forward-slash relative paths. Symlinked files are followed; symlinked
- * directories are skipped so a cycle can never be traversed.
+ * 递归列出目录下的普通文件，返回 { full, relative }（相对路径用正斜杠）。
+ * 符号链接文件会被跟随；符号链接目录会被跳过，因此永远不会陷入循环。
  */
 async function walkFiles(dir: any, rel = "", out: any[] = []) {
   const items = await readdir(dir, { withFileTypes: true });
@@ -104,16 +102,14 @@ async function walkFiles(dir: any, rel = "", out: any[] = []) {
 }
 
 /**
- * Add a skill from a local path, mirroring the Web UI add flow:
- *   bundle = a directory whose top level contains SKILL.md
- *   flat   = a single markdown file
+ * 从本地路径添加技能，与 Web 端添加流程一致：
+ *   目录束 = 顶层含 SKILL.md 的目录
+ *   单文件 = 单个 markdown 文件
  *
- * Every validation step runs BEFORE anything is written (frontmatter,
- * duplicate name across all roots, destination conflicts, unsafe layouts).
- * The copy itself is staged inside the destination root and renamed into
- * place at the end, so any failure mid-write rolls back cleanly.
- * The destination is the scope folder: --workspace → that workspace's
- * .dsh/skills, --project → the cwd project's .dsh/skills, default → global.
+ * 所有校验都发生在任何写入之前（frontmatter、跨根重名、目标冲突、
+ * 不安全布局）。复制本身先在目标根内暂存、最后改名就位，因此中途任何
+ * 失败都会干净回滚。目标即作用域文件夹：--workspace → 该工作区的
+ * .dsh/skills，--project → cwd 项目的 .dsh/skills，默认 → 全局。
  */
 async function addSkill(sourceArg, flags, roots, entries) {
   const source = resolve(sourceArg);
@@ -140,7 +136,7 @@ async function addSkill(sourceArg, flags, roots, entries) {
     name = validation.skill.name;
   }
 
-  // 2) Destination scope folder.
+  // 2) 目标作用域文件夹。
   const homes = userHomes();
   let destRoot;
   if (flags.workspace !== undefined) {
@@ -153,14 +149,14 @@ async function addSkill(sourceArg, flags, roots, entries) {
   }
   const target = kind === "bundle" ? join(destRoot, name) : join(destRoot, basename(source));
 
-  // 3) Duplicate + layout guards.
+  // 3) 重名与布局防护。
   const existing = winnerEntry(entries, name);
   if (existing !== undefined) throw new Error('同名技能 "' + name + '" 已存在（' + existing.source + "，" + (existing.enabled ? "已启用" : "已停用") + "）");
   if (await pathExists(target)) throw new Error("目标路径已存在：" + target);
   if (resolve(source) === resolve(target)) throw new Error("源路径与目标相同，无需添加：" + sourceArg);
   if (resolve(destRoot).startsWith(resolve(source))) throw new Error("源路径不能是目标技能根本身或其上级目录：" + sourceArg);
 
-  // 4) Staged copy + atomic rename; roll back on any failure.
+  // 4) 暂存复制 + 原子改名；任何失败都回滚。
   await mkdir(destRoot, { recursive: true });
   const staging = join(destRoot, ".dsh-skill-staging-" + process.pid + "-" + Math.random().toString(36).slice(2, 8));
   try {
@@ -185,7 +181,7 @@ async function addSkill(sourceArg, flags, roots, entries) {
   return { name, kind, target };
 }
 
-/** Human-readable scope label for list output. */
+/** 列表输出用的人类可读作用域标签。 */
 function scopeLabel(entry) {
   if (entry.projectRoot !== undefined) return "工作区: " + (basename(entry.projectRoot) || entry.projectRoot);
   return "全局";

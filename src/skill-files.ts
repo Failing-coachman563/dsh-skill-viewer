@@ -1,30 +1,30 @@
 /**
- * dsh-skill-viewer - shared skill-file conventions.
+ * dsh-skill-viewer —— 技能文件约定的统一来源（宿主与 CLI 共用）。
  *
- * The single source of truth for how skills live on disk, shared by:
- *   - lib/index.js (host half: catalog merge, hot enable/disable, delete, add)
- *   - bin/dsh-skill.js (management CLI)
+ * 技能在磁盘上如何存放，以本模块为准，被以下两处共用：
+ *   - src/index.ts  （宿主半区：目录合并、热启用/停用、删除、添加）
+ *   - src/cli.ts    （管理命令行）
  *
- * Conventions (must match what @deepseek-ai/dsh-skill-filesystem discovers):
- *   - directory bundle:  <root>/<name>/SKILL.md   (name comes from frontmatter)
- *   - flat skill:        <root>/<name>.md          (name comes from frontmatter)
- *   - disabled = renamed to "*.disabled"; the provider then no longer lists it.
- *   - frontmatter: YAML block between "---" lines with name + description.
+ * 约定（必须与 @deepseek-ai/dsh-skill-filesystem 的发现行为一致）：
+ *   - 目录束：  <root>/<name>/SKILL.md   （技能名取自 frontmatter）
+ *   - 单文件：  <root>/<name>.md          （技能名取自 frontmatter）
+ *   - 停用 = 改名为 "*.disabled"，此后提供方不再列出该技能。
+ *   - frontmatter：位于 "---" 行之间的 YAML 块，含 name + description。
  *
- * This module depends only on node:fs / node:path / node:os and the `yaml`
- * package (the same parser dsh-skill-filesystem uses for frontmatter).
+ * 本模块只依赖 node:fs / node:path / node:os 以及 `yaml` 包
+ * （与 dsh-skill-filesystem 解析 frontmatter 用的是同一个解析器）。
  */
 import { access, readdir, readFile, stat } from "node:fs/promises";
 import { dirname, join, resolve } from "node:path";
 import { parse as parseYaml } from "yaml";
 
-/** Suffix marking a hot-disabled skill file. */
+/** 热停用技能文件的后缀标记。 */
 export const DISABLED_SUFFIX = ".disabled";
 
-/** The public skill-name grammar (kebab-case, lowercase alphanumerics). */
+/** 公开的技能命名规则（kebab-case，小写字母与数字）。 */
 export const SKILL_NAME_RE = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
-/** Whether a filesystem path exists. */
+/** 判断文件系统路径是否存在。 */
 export async function pathExists(path) {
   try {
     await access(path);
@@ -34,7 +34,7 @@ export async function pathExists(path) {
   }
 }
 
-/** The project anchor: nearest ancestor containing .git, else the cwd itself. */
+/** 项目锚点：向上找最近的含 .git 的祖先目录；找不到就退回 cwd 本身。 */
 export async function findProjectRoot(cwd) {
   let current = resolve(cwd);
   while (true) {
@@ -46,8 +46,8 @@ export async function findProjectRoot(cwd) {
 }
 
 /**
- * Lenient frontmatter read for listing/scanning (name + description + body).
- * Returns undefined when the file is not a plausible skill.
+ * 面向列表/扫描的宽松 frontmatter 读取（name + description + body）。
+ * 文件看起来不像技能时返回 undefined。
  */
 export function parseFrontmatter(raw) {
   const text = raw.trimStart();
@@ -74,16 +74,16 @@ export function parseFrontmatter(raw) {
 }
 
 /**
- * Strict frontmatter validation for NEW skills, mirroring the acceptance
- * rules of dsh-skill-filesystem exactly (same YAML parser and same field
- * policy) so that content DSH would reject never gets written:
- *   - name: required, kebab-case grammar
- *   - description: required, non-empty string
- *   - whenToUse: string when present
- *   - disable-model-invocation / user-invocable: boolean-ish values
- *   - legacy invocation keys are rejected
- *   - metadata: object when present
- * @returns { ok: true, skill } or { ok: false, error } with a readable reason.
+ * 面向新技能的严格 frontmatter 校验，与 dsh-skill-filesystem 的接收规则
+ * 完全一致（同一个 YAML 解析器、同一套字段策略），保证会被 DSH 拒绝的
+ * 内容永远不会被写入：
+ *   - name：必填，kebab-case 命名规则
+ *   - description：必填，非空字符串
+ *   - whenToUse：出现时必须是字符串
+ *   - disable-model-invocation / user-invocable：布尔式取值
+ *   - 旧版 invocation 字段会被拒绝
+ *   - metadata：出现时必须是对象
+ * @returns { ok: true, skill } 或 { ok: false, error }（带可读原因）。
  */
 export function validateFrontmatter(raw: string): { ok: true; skill: { name: string; description: string; whenToUse?: string; body: string } } | { ok: false; error: string } {
   const text = raw.trimStart();
@@ -122,13 +122,12 @@ export function validateFrontmatter(raw: string): { ok: true; skill: { name: str
 }
 
 /**
- * The management roots: project roots (anchored at the git root of cwd) and
- * user roots. Order = discovery precedence (lower index wins), matching the
- * provider ranks: project .dsh > project .agents > user .dsh > user .agents.
+ * 管理根目录：项目根（锚定到 cwd 的 git 根）+ 用户根。
+ * 顺序即发现优先级（越靠前越先命中），与提供方的分级一致：
+ * 项目 .dsh > 项目 .agents > 用户 .dsh > 用户 .agents。
  *
- * Roots that resolve to the same directory (e.g. running from the home dir,
- * where the project anchor falls back to the cwd itself) are de-duplicated;
- * the first (higher-precedence) label wins.
+ * 解析后指向同一目录的根（例如在主目录下运行、项目锚点回退到 cwd 本身）
+ * 会被去重，保留第一个（优先级更高的）标签。
  */
 export async function buildRoots(cwd, options: any = {}) {
   const roots: any[] = [];
@@ -151,11 +150,10 @@ export async function buildRoots(cwd, options: any = {}) {
 }
 
 /**
- * Collect every skill entry (enabled + disabled, bundles + flat files) under
- * the given roots. Unknown/invalid entries fall back to a name derived from
- * the directory/file name and are still reported (disabled ones must stay
- * manageable). Symlinked directories (workspace junctions pointing into the
- * managed store) are followed, matching the provider's discovery behavior.
+ * 收集给定根目录下的全部技能条目（启用 + 停用、目录束 + 单文件）。
+ * 未知/不合规的条目退回按目录名/文件名取名，仍会列出（停用条目必须保持
+ * 可管理）。符号链接目录（指向工作区的联接点）会被跟随，与提供方的发现
+ * 行为一致。
  */
 export async function collectSkillEntries(roots) {
   const entries: any[] = [];
@@ -195,8 +193,7 @@ export async function collectSkillEntries(roots) {
 }
 
 /**
- * The winning entry for a skill name: the first one in root order (the same
- * precedence the gateway's registry applies).
+ * 某技能名的胜出条目：按根目录顺序取第一个（与网关注册表的优先级一致）。
  */
 export function winnerEntry(entries, name) {
   const matches = entries.filter((entry) => entry.name === name);
@@ -205,7 +202,7 @@ export function winnerEntry(entries, name) {
   return matches[0];
 }
 
-/** Stable numeric rank for one root source (lower = higher precedence). */
+/** 根来源的稳定数字分级（越小优先级越高）。 */
 export function sourceRank(source) {
   switch (source) {
     case "project-dsh": return 1;
