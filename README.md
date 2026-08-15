@@ -33,7 +33,7 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
 1. 安装本包（bundle 层自动挂载，无需编辑配置文件）
 
    ```bash
-   dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.5.0/dsh-skill-viewer-0.5.0.tgz
+   dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.5.1/dsh-skill-viewer-0.5.1.tgz
    ```
 
    > 首选发行版 tarball：不走 Git，不受 pnpm v11 的构建脚本限制。
@@ -64,6 +64,7 @@ dsh-skill add <path> --workspace D:\项目A       # 直接添加到指定工作�
 dsh-skill scope <name> --global                  # 迁移单个技能到全局
 dsh-skill scope <name> --workspace D:\项目A      # 迁移单个技能到指定工作区（--copy 复制）
 dsh-skill migrate <name...|--all> --from <全局|路径> --to <全局|路径> [--copy] [--yes]
+dsh-skill update [--profile <name>]  # 检查并更新插件（默认 web 配置）
                                                  # 批量迁移（复制/移动）
 dsh-skill disable <name>       # 停用
 dsh-skill enable <name>        # 启用
