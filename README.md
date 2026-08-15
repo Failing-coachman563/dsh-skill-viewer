@@ -22,13 +22,17 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
 - **批量迁移**：“+”号左侧的迁移按钮：源作用域、目标作用域（**可多选**）与技能都在
   对话框内手动选择，批量**复制**或**移动**（默认不勾选任何技能；逐个迁移、失败不影响
   其余；移动模式限单个目标）。
+- **技能分组**（0.4.0）：作用域横栏下方新增分组横栏（全部 + 分组名，可横向滚动），
+  点击只显示该分组下的技能。“分组”按钮（迁移按钮左侧）打开分组编辑器：新建/重命名/
+  删除分组、选择作用域、命名并批量勾选成员。分组只写入插件自己的显示配置
+  （`~/.dsh/skills/.system/skill-viewer/groups.json`），不修改技能目录。
 
 ## 安装
 
 1. 安装本包（bundle 层自动挂载，无需编辑配置文件）
 
    ```bash
-   dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.3.1/dsh-skill-viewer-0.3.1.tgz
+   dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.4.0/dsh-skill-viewer-0.4.0.tgz
    ```
 
    > 首选发行版 tarball：不走 Git，不受 pnpm v11 的构建脚本限制。

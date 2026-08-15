@@ -19,6 +19,12 @@ import {
   scopeRootOf,
   workspaceSkillRoot
 } from "./scope.js";
+import {
+  deleteGroup,
+  groupsForSkill,
+  loadGroups,
+  upsertGroup
+} from "./groups.js";
 
 /**
  * dsh-skill-viewer —— 宿主半区。
@@ -55,8 +61,26 @@ const skillSummarySchema = z.object({
   enabled: z.boolean(),
   modelInvocable: z.boolean(),
   userInvocable: z.boolean(),
-  scope: scopeSchema.optional()
+  scope: scopeSchema.optional(),
+  groups: z.array(z.string()).optional()
 });
+
+const groupRowSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  scopes: z.record(z.string(), z.array(z.string()))
+});
+
+const groupsResultSchema = z.object({ groups: z.array(groupRowSchema) });
+
+const saveGroupPayloadSchema = z.object({
+  id: z.string().optional(),
+  name: z.string(),
+  scope: z.string().nullable(),
+  names: z.array(z.string())
+});
+
+const deleteGroupPayloadSchema = z.object({ id: z.string() });
 
 const listResultSchema = z.object({ skills: z.array(skillSummarySchema) });
 
@@ -138,6 +162,37 @@ const MANIFEST = {
       invocation: { kind: "direct" },
       parameters: [],
       result: { mode: "strict", typeSymbol: "dsh-skill-viewer#WorkspacesResult", schema: workspacesResultSchema }
+    },
+    {
+      id: "dsh-skill-viewer#skillsViewer/groups",
+      service: "skillsViewer",
+      namespace: "skillsViewer",
+      method: "groups",
+      invocation: { kind: "direct" },
+      parameters: [],
+      result: { mode: "strict", typeSymbol: "dsh-skill-viewer#GroupsResult", schema: groupsResultSchema }
+    },
+    {
+      id: "dsh-skill-viewer#skillsViewer/saveGroup",
+      service: "skillsViewer",
+      namespace: "skillsViewer",
+      method: "saveGroup",
+      invocation: { kind: "direct" },
+      parameters: [
+        { name: "payload", wire: "payload", source: "json", codec: { mode: "strict", typeSymbol: "dsh-skill-viewer#SaveGroupPayload", schema: saveGroupPayloadSchema } }
+      ],
+      result: { mode: "strict", typeSymbol: "dsh-skill-viewer#GroupsResult", schema: groupsResultSchema }
+    },
+    {
+      id: "dsh-skill-viewer#skillsViewer/deleteGroup",
+      service: "skillsViewer",
+      namespace: "skillsViewer",
+      method: "deleteGroup",
+      invocation: { kind: "direct" },
+      parameters: [
+        { name: "payload", wire: "payload", source: "json", codec: { mode: "strict", typeSymbol: "dsh-skill-viewer#DeleteGroupPayload", schema: deleteGroupPayloadSchema } }
+      ],
+      result: { mode: "strict", typeSymbol: "dsh-skill-viewer#GroupsResult", schema: groupsResultSchema }
     },
     {
       id: "dsh-skill-viewer#skillsViewer/content",
@@ -326,6 +381,7 @@ class SkillsViewerGateway extends TypertRemoteService {
     const { registry, cwd, scope } = this.viewFor(sessionId);
     const roots = await this.allRoots();
     const listed = await registry.list({ cwd, scope });
+    const groupMap = await loadGroups(this.homes().dshHome);
     const skills: any[] = [];
     // 按（名称, 作用域）去重——不能只按名称：同一技能可能同时存在于全局
     // 和某个工作区，两行都必须出现在各自的作用域芯片下。
@@ -345,7 +401,8 @@ class SkillsViewerGateway extends TypertRemoteService {
         enabled: true,
         modelInvocable: skill.invocation.modelInvocable,
         userInvocable: skill.invocation.userInvocable,
-        scope: { kind: "global" }
+        scope: { kind: "global" },
+        groups: groupsForSkill(groupMap, "global", skill.name)
       });
       seen.add(seenKey(skill.name, "global"));
     }
@@ -362,10 +419,40 @@ class SkillsViewerGateway extends TypertRemoteService {
         enabled: entry.enabled,
         modelInvocable: false,
         userInvocable: false,
-        scope: this.scopeForEntry(entry)
+        scope: this.scopeForEntry(entry),
+        groups: groupsForSkill(groupMap, scopePath, entry.name)
       });
     }
     return { skills };
+  }
+
+  /** 分组列表（按名称排序）。 */
+  async groups() {
+    return { groups: this.groupRows(await loadGroups(this.homes().dshHome)) };
+  }
+
+  /** 新建或更新分组（设置某作用域下的成员列表）。 */
+  async saveGroup(payload) {
+    const { id, name, scope: rawScope, names } = payload;
+    const { dshHome } = this.homes();
+    const scopeKey = rawScope === null || rawScope === undefined ? "global" : await normalizeWorkspace(rawScope);
+    await upsertGroup(dshHome, id, name, scopeKey, names);
+    return { groups: this.groupRows(await loadGroups(dshHome)) };
+  }
+
+  /** 删除分组。 */
+  async deleteGroup(payload) {
+    const { id } = payload;
+    const { dshHome } = this.homes();
+    await deleteGroup(dshHome, id);
+    return { groups: this.groupRows(await loadGroups(dshHome)) };
+  }
+
+  /** 把分组配置转成 wire 行（含每个作用域的成员名）。 */
+  groupRows(groups: any) {
+    return Object.entries(groups as Record<string, any>)
+      .map(([id, group]) => ({ id, name: group.name, scopes: group.scopes ?? {} }))
+      .sort((a, b) => a.name.localeCompare(b.name));
   }
 
   /** 所有已知工作区的互不相同的项目根（供作用域横栏使用）。 */
