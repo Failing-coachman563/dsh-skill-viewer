@@ -33,13 +33,13 @@ import {
   pathExists,
   validateFrontmatter,
   winnerEntry
-} from "../lib/skill-files.js";
+} from "./skill-files.js";
 import {
   batchMigrateEntries,
   migrateEntry,
   normalizeWorkspace,
   workspaceSkillRoot
-} from "../lib/scope.js";
+} from "./scope.js";
 
 function usage() {
   console.log([
@@ -86,7 +86,7 @@ function userHomes() {
  * forward-slash relative paths. Symlinked files are followed; symlinked
  * directories are skipped so a cycle can never be traversed.
  */
-async function walkFiles(dir, rel = "", out = []) {
+async function walkFiles(dir: any, rel = "", out: any[] = []) {
   const items = await readdir(dir, { withFileTypes: true });
   for (const item of items) {
     const full = join(dir, item.name);
@@ -193,8 +193,8 @@ function scopeLabel(entry) {
 
 async function main() {
   const args = process.argv.slice(2);
-  const flags = { cwd: process.cwd(), yes: false, project: false, workspace: undefined, global: false, copy: false, from: undefined, to: undefined, all: false };
-  const positional = [];
+  const flags: any = { cwd: process.cwd(), yes: false, project: false, workspace: undefined, global: false, copy: false, from: undefined, to: undefined, all: false };
+  const positional: any[] = [];
   for (let i = 0; i < args.length; i++) {
     if (args[i] === "--cwd") {
       i += 1;
@@ -322,7 +322,7 @@ async function main() {
     }
     const byName = new Map();
     for (const entry of await collectSkillEntries(fromRoots)) if (!byName.has(entry.name)) byName.set(entry.name, entry);
-    const chosen = [];
+    const chosen: any[] = [];
     if (flags.all) {
       for (const entry of byName.values()) chosen.push(entry);
     } else {

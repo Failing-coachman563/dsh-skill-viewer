@@ -30,15 +30,22 @@
     "zod": "^4.4.3"
   },
   "bin": {
-    "dsh-skill": "./bin/dsh-skill.js"
+    "dsh-skill": "./lib/cli.js"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.json && node scripts/strip-client-export.mjs",
+    "prepack": "tsc -p tsconfig.json && node scripts/strip-client-export.mjs"
   },
   "files": [
     "lib",
-    "bin",
     "assets",
     "README.md",
     "README.en.md",
     "LICENSE",
     "cordis.patch.yml"
-  ]
+  ],
+  "devDependencies": {
+    "@types/node": "^26.2.0",
+    "typescript": "^7.0.2"
+  }
 }

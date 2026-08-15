@@ -70,6 +70,10 @@ The plugin doesn't parse skills itself — it's just a management surface over t
 - Changing scope = physically copying/moving the files into the target scope folder (validated first, rolled back on failure)
 - Deployment-bundled skills are read-only: they cannot be disabled or deleted
 
+## Development
+
+The source is TypeScript under `src/`; the compiled `lib/*.js` is committed with the repo (so git installs keep working). After editing, run `pnpm build`: `tsc` compiles to `lib/` and strips the extra module marker from the browser bundle. `npm pack` rebuilds automatically via prepack — no manual compile step.
+
 ## Uninstall
 
 ```bash
