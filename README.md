@@ -7,7 +7,8 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
 
 注意：本项目提供的参考命令默认指定profile为默认的--profile web，需要更改profile的请自行注意。
 
-<img width="614" height="625" alt="image" src="https://github.com/user-attachments/assets/22782828-09f0-4031-be19-4c2e234556ad" />
+<img width="602" height="599" alt="image" src="https://github.com/user-attachments/assets/63ca0431-c920-4ae3-94c7-2839d78a7896" />
+
 
 
 ## 功能
