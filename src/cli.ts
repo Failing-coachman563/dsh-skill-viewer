@@ -5,11 +5,11 @@
  * 直接操作 DSH 技能文件系统提供方读取的技能文件；运行中的网关通过文件
  * 监听器热感知变化（无需重启）。
  *
- * 实体模型（0.3.0）：一个技能只存在于一个作用域文件夹——
+ * 实体模型（0.3.0）：一个技能只存在于一个位置（全局或工作区）的文件夹——
  *   - 全局：    ~/.dsh/skills
  *   - 工作区：  <workspaceProjectRoot>/.dsh/skills
  *
- *   dsh-skill list                     列出技能（含作用域）
+ *   dsh-skill list                     列出技能（标注全局 / 工作区）
  *   dsh-skill enable <name>            重新启用已停用的技能
  *   dsh-skill disable <name>           热停用技能（改名 *.disabled）
  *   dsh-skill delete <name> [--yes]    永久删除技能
@@ -43,7 +43,7 @@ import {
 function usage() {
   console.log([
     "用法:",
-    "  dsh-skill list [--cwd <path>]                         列出技能（含作用域：全局 / 工作区）",
+    "  dsh-skill list [--cwd <path>]                         列出技能（标注全局 / 工作区）",
     "  dsh-skill enable <name> [--cwd <path>]                启用已停用的技能",
     "  dsh-skill disable <name> [--cwd <path>]               停用技能（改名 *.disabled，热生效）",
     "  dsh-skill delete <name> [--yes] [--cwd <path>]        删除技能（目录型删整个目录）",
@@ -52,9 +52,9 @@ function usage() {
     "  dsh-skill scope <name> [--global | --workspace <path>] [--copy]",
     "                                                        迁移单个技能到全局或指定工作区（默认移动，--copy 复制）",
     "  dsh-skill migrate <name...|--all> --from <global|路径> --to <global|路径> [--copy] [--yes]",
-    "                                                        批量迁移：把源作用域的技能复制/移动到目标作用域",
+    "                                                        批量迁移：把源工作区的技能复制/移动到目标工作区",
     "",
-    "说明: 技能实体直接存放在其作用域的技能文件夹内——全局在 ~/.dsh/skills，",
+    "说明: 技能实体直接存放在其工作区的技能文件夹内——全局在 ~/.dsh/skills，",
     "限定工作区在该工作区的 .dsh/skills。停用 = 把 SKILL.md 改名 SKILL.md.disabled；",
     "网关的监听器会热感知，无需重启。迁移默认是移动（源删除），--copy 保留源。",
     "CLI 只扫描当前目录锚定的项目根与用户根；管理其他工作区的技能请加 --cwd <工作区路径>。",
@@ -108,7 +108,7 @@ async function walkFiles(dir: any, rel = "", out: any[] = []) {
  *
  * 所有校验都发生在任何写入之前（frontmatter、跨根重名、目标冲突、
  * 不安全布局）。复制本身先在目标根内暂存、最后改名就位，因此中途任何
- * 失败都会干净回滚。目标即作用域文件夹：--workspace → 该工作区的
+ * 失败都会干净回滚。目标即对应位置的技能文件夹：--workspace → 该工作区的
  * .dsh/skills，--project → cwd 项目的 .dsh/skills，默认 → 全局。
  */
 async function addSkill(sourceArg, flags, roots, entries) {
@@ -136,7 +136,7 @@ async function addSkill(sourceArg, flags, roots, entries) {
     name = validation.skill.name;
   }
 
-  // 2) 目标作用域文件夹。
+  // 2) 目标位置的技能文件夹。
   const homes = userHomes();
   let destRoot;
   if (flags.workspace !== undefined) {
@@ -181,7 +181,7 @@ async function addSkill(sourceArg, flags, roots, entries) {
   return { name, kind, target };
 }
 
-/** 列表输出用的人类可读作用域标签。 */
+/** 列表输出用的人类可读位置标签（全局 / 工作区）。 */
 function scopeLabel(entry) {
   if (entry.projectRoot !== undefined) return "工作区: " + (basename(entry.projectRoot) || entry.projectRoot);
   return "全局";
@@ -267,7 +267,7 @@ async function main() {
     }
     const added = await addSkill(name, flags, roots, entries);
     const where = flags.workspace !== undefined ? "工作区 " + (await normalizeWorkspace(flags.workspace)) : flags.project ? "项目根" : "全局";
-    console.log('已添加技能 "' + added.name + '"（' + (added.kind === "bundle" ? "目录束" : "单文件") + " → " + added.target + "，作用域：" + where + "，网关监听器将热感知）");
+    console.log('已添加技能 "' + added.name + '"（' + (added.kind === "bundle" ? "目录束" : "单文件") + " → " + added.target + "，工作区：" + where + "，网关监听器将热感知）");
     return;
   }
 
@@ -313,7 +313,7 @@ async function main() {
       : [{ path: workspaceSkillRoot(fromProject), source: "project-dsh", projectRoot: fromProject }];
     const targetRoot = toGlobal ? join(homes.dshHome, "skills") : workspaceSkillRoot(toProject);
     if (fromRoots.some((root) => resolve(root.path) === resolve(targetRoot))) {
-      console.error("源作用域与目标作用域相同");
+      console.error("源工作区与目标工作区相同");
       process.exit(2);
     }
     const byName = new Map();
@@ -325,7 +325,7 @@ async function main() {
       for (const wanted of names) {
         const entry = byName.get(wanted);
         if (entry === undefined) {
-          console.error('技能 "' + wanted + '" 不在源作用域中，已跳过');
+          console.error('技能 "' + wanted + '" 不在源工作区中，已跳过');
           continue;
         }
         chosen.push(entry);

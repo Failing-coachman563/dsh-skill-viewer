@@ -21,7 +21,7 @@
 		const cssUtils = ".SKV_visuallyHidden{position:absolute;width:1px;height:1px;margin:-1px;padding:0;border:0;clip:rect(0 0 0 0);overflow:hidden;white-space:nowrap}";
 		// 设置页导航图标（外壳硬编码图标，无扩展点：打标记 + CSS 蒙版绘制）
 		const cssIcon = "button[data-skills-nav]>svg{display:none}button[data-skills-nav]::before{content:\"\";width:16px;height:16px;flex:none;display:inline-block;background-color:currentColor;-webkit-mask:url(data:image/png;base64,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) center/16px 16px no-repeat;mask:url(data:image/png;base64,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) center/16px 16px no-repeat}body[data-ds-dark-theme] .SKV_switchThumb{background:#fff}body[data-ds-dark-theme] .SKV_switch[data-on=true] .SKV_switchThumb{background:#fff}";
-		const cssMigrate = ".SKV_scopeBar{gap:6px;padding:2px;max-width:100%;overflow-x:auto;scrollbar-width:thin;display:flex;align-items:center}.SKV_scopeChip{font:inherit;color:var(--dsw-alias-label-secondary);cursor:pointer;background:var(--dsw-alias-bg-layer-1);border:1px solid var(--dsw-alias-border-l2);border-radius:999px;padding:3px 12px;font-size:12px;line-height:18px;white-space:nowrap;flex:none;display:inline-flex;align-items:center;gap:6px}.SKV_scopeChip:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_scopeChip[data-active=true]{background:color-mix(in srgb, var(--dsw-alias-state-business-primary) 12%, transparent);border-color:var(--dsw-alias-state-business-primary);color:var(--dsw-alias-state-business-primary)}.SKV_scopeChipCount{color:var(--dsw-alias-label-tertiary);font-variant-numeric:tabular-nums;font-size:11px;line-height:16px}.SKV_scopeChip[data-active=true] .SKV_scopeChipCount{color:var(--dsw-alias-state-business-primary)}.SKV_migrateButton{box-sizing:border-box;width:28px;height:28px;color:var(--dsw-alias-label-primary);font:inherit;cursor:pointer;background:0 0;border:1px solid var(--dsw-alias-border-l2);border-radius:14px;padding:0;display:inline-flex;align-items:center;justify-content:center}.SKV_migrateButton:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover-solid)}.SKV_migrateButton:disabled{cursor:default;opacity:.6}.SKV_migrateSection{flex-direction:column;gap:6px;display:flex}.SKV_migrateLabel{color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;margin:0}.SKV_migrateFromValue{color:var(--dsw-alias-label-primary);font-size:13px;line-height:20px;margin:0;word-break:break-all}.SKV_migrateList{border:1px solid var(--dsw-alias-border-l2);border-radius:8px;max-height:220px;overflow-y:auto;margin:0;padding:4px;list-style:none;display:flex;flex-direction:column;gap:2px}.SKV_migrateItem{font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;background:0 0;border:none;border-radius:6px;padding:6px 10px;font-size:13px;line-height:20px;text-align:left;display:flex;align-items:center;gap:8px}.SKV_migrateItem:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_migrateItem input{margin:0;accent-color:var(--dsw-alias-state-business-primary)}.SKV_migrateItemName{flex:1;min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.SKV_migrateItemState{color:var(--dsw-alias-label-tertiary);font-size:11px;flex:none}.SKV_migrateSelectAll{font:inherit;color:var(--dsw-alias-state-business-primary);cursor:pointer;background:0 0;border:none;padding:0;font-size:12px;line-height:18px}.SKV_migrateHint{color:var(--dsw-alias-label-tertiary);font-size:12px;line-height:18px;margin:0}.SKV_migrateResult{border-radius:8px;padding:8px 12px;font-size:12px;line-height:18px;margin:0}.SKV_migrateResult[data-ok=true]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 10%, transparent);color:var(--dsw-alias-state-success-primary)}.SKV_migrateResult[data-ok=false]{background:color-mix(in srgb, var(--dsw-alias-state-warning-primary) 10%, transparent);color:var(--dsw-alias-state-warning-primary)}.SKV_migrateResultList{margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;max-height:120px;overflow-y:auto}.SKV_scopeChip{max-width:320px}.SKV_scopeChipLabel{max-width:220px;min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:inline-block}.SKV_wsPath{min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:block}.SKV_migrateOptionLabel{min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.SKV_scopeOptions{max-height:132px;overflow-y:auto;scrollbar-width:thin}.SKV_migrateList{max-height:148px}.SKV_scopeBox{overflow-y:auto;scrollbar-width:thin}";
+		const cssMigrate = ".SKV_scopeBar{gap:6px;padding:2px;max-width:100%;overflow-x:auto;scrollbar-width:thin;display:flex;align-items:center}.SKV_scopeChip{font:inherit;color:var(--dsw-alias-label-secondary);cursor:pointer;background:var(--dsw-alias-bg-layer-1);border:1px solid var(--dsw-alias-border-l2);border-radius:999px;padding:3px 12px;font-size:12px;line-height:18px;white-space:nowrap;flex:none;display:inline-flex;align-items:center;gap:6px}.SKV_scopeChip:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_scopeChip[data-active=true]{background:color-mix(in srgb, var(--dsw-alias-state-business-primary) 12%, transparent);border-color:var(--dsw-alias-state-business-primary);color:var(--dsw-alias-state-business-primary)}.SKV_scopeChipCount{color:var(--dsw-alias-label-tertiary);font-variant-numeric:tabular-nums;font-size:11px;line-height:16px}.SKV_scopeChip[data-active=true] .SKV_scopeChipCount{color:var(--dsw-alias-state-business-primary)}.SKV_migrateButton{box-sizing:border-box;width:28px;height:28px;color:var(--dsw-alias-label-primary);font:inherit;cursor:pointer;background:0 0;border:1px solid var(--dsw-alias-border-l2);border-radius:14px;padding:0;display:inline-flex;align-items:center;justify-content:center}.SKV_migrateButton:hover:not(:disabled){background:var(--dsw-alias-interactive-bg-hover-solid)}.SKV_migrateButton:disabled{cursor:default;opacity:.6}.SKV_migrateSection{flex-direction:column;gap:6px;display:flex}.SKV_migrateLabel{color:var(--dsw-alias-label-secondary);font-size:12px;line-height:18px;margin:0}.SKV_migrateFromValue{color:var(--dsw-alias-label-primary);font-size:13px;line-height:20px;margin:0;word-break:break-all}.SKV_migrateList{border:1px solid var(--dsw-alias-border-l2);border-radius:8px;max-height:220px;overflow-y:auto;margin:0;padding:4px;list-style:none;display:flex;flex-direction:column;gap:2px}.SKV_migrateItem{font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;background:0 0;border:none;border-radius:6px;padding:6px 10px;font-size:13px;line-height:20px;text-align:left;display:flex;align-items:center;gap:8px}.SKV_migrateItem:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_migrateItem input{margin:0;accent-color:var(--dsw-alias-state-business-primary)}.SKV_migrateItemName{flex:1;min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.SKV_migrateItemState{color:var(--dsw-alias-label-tertiary);font-size:11px;flex:none}.SKV_migrateSelectAll{font:inherit;color:var(--dsw-alias-state-business-primary);cursor:pointer;background:0 0;border:none;padding:0;font-size:12px;line-height:18px}.SKV_migrateHint{color:var(--dsw-alias-label-tertiary);font-size:12px;line-height:18px;margin:0}.SKV_migrateResult{border-radius:8px;padding:8px 12px;font-size:12px;line-height:18px;margin:0}.SKV_migrateResult[data-ok=true]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 10%, transparent);color:var(--dsw-alias-state-success-primary)}.SKV_migrateResult[data-ok=false]{background:color-mix(in srgb, var(--dsw-alias-state-warning-primary) 10%, transparent);color:var(--dsw-alias-state-warning-primary)}.SKV_migrateResultList{margin:4px 0 0;padding:0;list-style:none;display:flex;flex-direction:column;gap:2px;max-height:120px;overflow-y:auto}.SKV_scopeChip{max-width:320px}.SKV_scopeChipLabel{max-width:220px;min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:inline-block}.SKV_wsPath{min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden;display:block}.SKV_migrateOptionLabel{min-width:0;text-overflow:ellipsis;white-space:nowrap;overflow:hidden}.SKV_scopeOptions{max-height:132px;overflow-y:auto;scrollbar-width:thin}.SKV_migrateList{max-height:148px}.SKV_scopeBox{overflow-y:auto;scrollbar-width:thin}.SKV_groupBar{gap:0;padding:0 2px;max-width:100%;overflow-x:auto;scrollbar-width:thin;display:flex;align-items:center}.SKV_groupItem{font:inherit;color:var(--dsw-alias-label-secondary);cursor:pointer;background:0 0;border:none;padding:2px 10px;font-size:12px;line-height:18px;white-space:nowrap;flex:none}.SKV_groupItem:hover{color:var(--dsw-alias-label-primary);background:var(--dsw-alias-interactive-bg-hover);border-radius:5px}.SKV_groupItem[data-active=true]{color:var(--dsw-alias-state-business-primary);font-weight:500}.SKV_groupSep{color:var(--dsw-alias-border-l1);flex:none;user-select:none;font-size:12px;line-height:18px;padding:0 1px}.SKV_select{width:100%;box-sizing:border-box;height:32px;font:inherit;font-size:13px;color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-layer-1);border:1px solid var(--dsw-alias-border-l2);border-radius:8px;padding:0 8px}.SKV_select:focus-visible{border-color:var(--dsw-alias-state-business-primary);box-shadow:0 0 0 2px color-mix(in srgb, var(--dsw-alias-state-business-primary) 18%, transparent);outline:none}.SKV_selectMulti{width:100%;box-sizing:border-box;font:inherit;font-size:13px;color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-layer-1);border:1px solid var(--dsw-alias-border-l2);border-radius:8px;padding:4px}.SKV_selectMulti option{padding:4px 6px;border-radius:4px}.SKV_selectMulti option:checked{background:color-mix(in srgb, var(--dsw-alias-state-business-primary) 18%, transparent)}.SKV_groupBody{display:flex;gap:16px;min-height:0}.SKV_groupSide{width:150px;flex:none;display:flex;flex-direction:column;gap:2px;min-width:0}.SKV_groupNewBtn{display:flex;align-items:center;gap:6px;justify-content:flex-start;font:inherit;font-size:13px;color:var(--dsw-alias-state-business-primary);cursor:pointer;background:0 0;border:1px dashed var(--dsw-alias-border-l1);border-radius:8px;padding:7px 10px;margin-bottom:6px;text-align:left}.SKV_groupNewBtn:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_groupSideLabel{font-size:12px;color:var(--dsw-alias-label-tertiary);padding:0 10px;margin-bottom:2px}.SKV_groupSideItem{display:flex;align-items:center;gap:8px;padding:7px 10px;border-radius:6px;font:inherit;font-size:13px;cursor:pointer;color:var(--dsw-alias-label-secondary);background:0 0;border:none;text-align:left;min-width:0}.SKV_groupSideItem:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_groupSideItem[data-active=true]{background:color-mix(in srgb, var(--dsw-alias-state-business-primary) 12%, transparent);color:var(--dsw-alias-state-business-primary);font-weight:500}.SKV_groupMain{flex:1;min-width:0;display:flex;flex-direction:column;gap:12px}.SKV_field{display:flex;flex-direction:column;gap:6px}.SKV_fieldLabel{font-size:12px;color:var(--dsw-alias-label-secondary);margin:0}.SKV_skillListBox{border:1px solid var(--dsw-alias-border-l2);border-radius:8px;padding:0 10px;max-height:220px;overflow-y:auto}.SKV_skillRow{display:flex;align-items:center;gap:10px;padding:8px 4px;border-bottom:0.5px solid var(--dsw-alias-border-l2);font:inherit;color:var(--dsw-alias-label-primary);cursor:pointer;min-width:0}.SKV_skillRow:last-child{border-bottom:none}.SKV_skillRow:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_skillRow input{margin:0;accent-color:var(--dsw-alias-state-business-primary);flex:none}.SKV_skillName{flex:1;min-width:0;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.SKV_skillBadge{font-size:12px;padding:2px 8px;border-radius:5px;white-space:nowrap;flex:none}.SKV_skillBadge[data-on=true]{background:color-mix(in srgb, var(--dsw-alias-state-success-primary) 12%, transparent);color:var(--dsw-alias-state-success-primary)}.SKV_skillBadge[data-on=false]{background:var(--dsw-alias-bg-layer-1);color:var(--dsw-alias-label-tertiary)}.SKV_countRow{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}.SKV_countText{font-size:12px;color:var(--dsw-alias-label-secondary);margin:0}.SKV_dialogFooter{display:flex;align-items:center;justify-content:space-between;margin-top:12px;padding-top:12px;border-top:0.5px solid var(--dsw-alias-border-l2)}.SKV_dangerBtn{font:inherit;font-size:13px;color:var(--dsw-alias-state-error-primary);cursor:pointer;background:0 0;border:1px solid transparent;border-radius:6px;padding:5px 10px}.SKV_dangerBtn:hover:not(:disabled){background:color-mix(in srgb, var(--dsw-alias-state-error-primary) 10%, transparent)}.SKV_dangerBtn:disabled{cursor:default;opacity:.6}.SKV_textInput{width:100%;box-sizing:border-box;height:32px;font:inherit;font-size:13px;color:var(--dsw-alias-label-primary);background:var(--dsw-alias-bg-layer-1);border:1px solid var(--dsw-alias-border-l2);border-radius:8px;outline:none;padding:0 10px}.SKV_textInput::placeholder{color:var(--dsw-alias-label-tertiary)}.SKV_textInput:focus-visible{border-color:var(--dsw-alias-state-business-primary);box-shadow:0 0 0 2px color-mix(in srgb, var(--dsw-alias-state-business-primary) 18%, transparent)}.SKV_scopeBox{width:640px}.SKV_groupSide{width:170px}.SKV_groupSideItem{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.SKV_select{appearance:none;-webkit-appearance:none;width:100%;box-sizing:border-box;height:32px;font:inherit;font-size:13px;color:var(--dsw-alias-label-primary);background-color:var(--dsw-alias-bg-layer-1);border:1px solid var(--dsw-alias-border-l2);border-radius:8px;padding:0 30px 0 10px;background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%2712%27 height=%2712%27 viewBox=%270 0 16 16%27 fill=%27none%27%3E%3Cpath d=%27M4 6l4 4 4-4%27 stroke=%27%23888%27 stroke-width=%271.6%27 stroke-linecap=%27round%27 stroke-linejoin=%27round%27/%3E%3C/svg%3E');background-repeat:no-repeat;background-position:right 10px center}.SKV_select:hover{border-color:var(--dsw-alias-border-l1)}.SKV_selectMulti:focus-visible{border-color:var(--dsw-alias-state-business-primary);box-shadow:0 0 0 2px color-mix(in srgb, var(--dsw-alias-state-business-primary) 18%, transparent);outline:none}.SKV_selectMulti option:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_targetBox{border:1px solid var(--dsw-alias-border-l2);border-radius:8px;padding:4px;max-height:152px;overflow-y:auto;scrollbar-width:thin}.SKV_targetItem{display:flex;align-items:center;gap:8px;padding:7px 6px;font:inherit;font-size:13px;color:var(--dsw-alias-label-primary);cursor:pointer;background:0 0;border:none;border-bottom:0.5px solid var(--dsw-alias-border-l2);width:100%;text-align:left;min-width:0}.SKV_targetItem:last-child{border-bottom:none}.SKV_targetItem:hover{background:var(--dsw-alias-interactive-bg-hover)}.SKV_targetItem[data-active=true]{background:color-mix(in srgb, var(--dsw-alias-state-business-primary) 8%, transparent)}.SKV_targetItem input{margin:0;accent-color:var(--dsw-alias-state-business-primary);flex:none}.SKV_skillListBox{max-height:180px}";
 const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + cssIcon;
 		const tagId = "dsh-skill-viewer/SkillsSection.module.css";
 		if (typeof document !== "undefined" && document.querySelector("style[data-plugin-css=" + JSON.stringify(tagId) + "]") === null) {
@@ -93,6 +93,30 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 			scopeBar: "SKV_scopeBar",
 			scopeChip: "SKV_scopeChip",
 			scopeChipCount: "SKV_scopeChipCount",
+			groupBar: "SKV_groupBar",
+			groupItem: "SKV_groupItem",
+			groupSep: "SKV_groupSep",
+			select: "SKV_select",
+			selectMulti: "SKV_selectMulti",
+			groupBody: "SKV_groupBody",
+			groupSide: "SKV_groupSide",
+			groupNewBtn: "SKV_groupNewBtn",
+			groupSideLabel: "SKV_groupSideLabel",
+			groupSideItem: "SKV_groupSideItem",
+			groupMain: "SKV_groupMain",
+			field: "SKV_field",
+			fieldLabel: "SKV_fieldLabel",
+			skillListBox: "SKV_skillListBox",
+			skillRow: "SKV_skillRow",
+			skillName: "SKV_skillName",
+			skillBadge: "SKV_skillBadge",
+			countRow: "SKV_countRow",
+			countText: "SKV_countText",
+			dialogFooter: "SKV_dialogFooter",
+			dangerBtn: "SKV_dangerBtn",
+			textInput: "SKV_textInput",
+			targetBox: "SKV_targetBox",
+			targetItem: "SKV_targetItem",
 			migrateButton: "SKV_migrateButton",
 			migrateSection: "SKV_migrateSection",
 			migrateLabel: "SKV_migrateLabel",
@@ -143,20 +167,20 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 			addFolderUnsupported: "当前浏览器不支持选择文件夹，请改用“选择技能文件”。",
 			addNoSkillFile: "所选文件夹不是有效的技能目录：缺少顶层的 SKILL.md 文件。",
 			scopeGlobal: "全局",
-			emptyScope: "该作用域下暂无技能。",
+			emptyScope: "该工作区下暂无技能。",
 			migrateButton: "批量迁移",
 			migrateTitle: "批量迁移技能",
-			migrateFrom: "源作用域（手动选择）",
-			migrateTo: "目标作用域（可多选）",
+			migrateFrom: "源工作区",
+			migrateTo: "目标工作区（可多选）",
 			migrateMode: "方式",
 			migrateModeCopy: "复制（保留原技能）",
 			migrateModeMove: "移动（删除原技能）",
 			migrateSelectAll: "全选",
-			migrateNoSkills: "该作用域下没有可迁移的技能。",
-			migratePickSource: "请先选择源作用域",
-			migratePickTarget: "请至少选择一个目标作用域",
-			migrateSameScope: "目标作用域不能与源作用域相同",
-			migrateMoveSingle: "移动模式只能选择一个目标作用域（多目标请改用复制）",
+			migrateNoSkills: "该工作区下没有可迁移的技能。",
+			migratePickSource: "请选择源工作区",
+			migratePickTarget: "请至少选择一个目标工作区",
+			migrateSameScope: "目标工作区不能与源工作区相同",
+			migrateMoveSingle: "移动模式只能选择一个目标工作区（多目标请改用复制）",
 			migratePickSkills: "请至少选择一个技能",
 			migrateConfirm: "开始迁移",
 			migrateBusy: "正在迁移…",
@@ -172,17 +196,21 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 			groupButton: "分组",
 			groupTitle: "技能分组",
 			groupNew: "新建分组",
+			groupName: "分组名称",
 			groupNamePlaceholder: "输入分组名称（必填）",
 			groupPickName: "请填写分组名称",
-			groupScope: "作用域",
-			groupPickScope: "请选择作用域",
+			groupScope: "工作区",
+			groupPickScope: "请选择工作区",
 			groupSkills: "技能",
-			groupNoSkills: "该作用域下没有可选择的技能。",
+			groupNoSkills: "该工作区下没有可选择的技能。",
 			groupEmpty: "该分组下暂无技能。",
 			groupSave: "保存分组",
 			groupSaving: "正在保存…",
 			groupDelete: "删除分组",
-			groupDeleteConfirm: "确定删除分组 "
+			groupDeleteConfirm: "确定删除分组 ",
+			skillFilterPlaceholder: "筛选技能",
+			skillCountLabel: "已选",
+			selectNone: "取消全选"
 		};
 
 		const en = {
@@ -216,20 +244,20 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 			addFolderUnsupported: "This browser cannot pick folders — use Choose skill file instead.",
 			addNoSkillFile: "Not a valid skill folder: missing a top-level SKILL.md file.",
 			scopeGlobal: "Global",
-			emptyScope: "No skills in this scope yet.",
+			emptyScope: "No skills in this workspace yet.",
 			migrateButton: "Batch migrate",
 			migrateTitle: "Batch migrate skills",
-			migrateFrom: "From (pick one)",
-			migrateTo: "To (multiple allowed)",
+			migrateFrom: "From workspace",
+			migrateTo: "To workspaces (multiple allowed)",
 			migrateMode: "Mode",
 			migrateModeCopy: "Copy (keep the original)",
 			migrateModeMove: "Move (delete the original)",
 			migrateSelectAll: "Select all",
-			migrateNoSkills: "No skills to migrate in this scope.",
-			migratePickSource: "Pick a source scope first",
-			migratePickTarget: "Pick at least one target scope",
-			migrateSameScope: "A target scope must differ from the source",
-			migrateMoveSingle: "Move mode allows exactly one target (use Copy for several)",
+			migrateNoSkills: "No skills to migrate in this workspace.",
+			migratePickSource: "Pick a source workspace",
+			migratePickTarget: "Pick at least one target workspace",
+			migrateSameScope: "A target workspace must differ from the source",
+			migrateMoveSingle: "Move mode allows exactly one target workspace (use Copy for several)",
 			migratePickSkills: "Pick at least one skill",
 			migrateConfirm: "Start migration",
 			migrateBusy: "Migrating…",
@@ -245,17 +273,21 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 			groupButton: "Groups",
 			groupTitle: "Skill groups",
 			groupNew: "New group",
+			groupName: "Group name",
 			groupNamePlaceholder: "Group name (required)",
 			groupPickName: "Pick a group name",
-			groupScope: "Scope",
-			groupPickScope: "Pick a scope",
+			groupScope: "Workspace",
+			groupPickScope: "Pick a workspace",
 			groupSkills: "Skills",
-			groupNoSkills: "No skills to pick in this scope.",
+			groupNoSkills: "No skills to pick in this workspace.",
 			groupEmpty: "No skills in this group.",
 			groupSave: "Save group",
 			groupSaving: "Saving…",
 			groupDelete: "Delete group",
-			groupDeleteConfirm: "Delete group "
+			groupDeleteConfirm: "Delete group ",
+			skillFilterPlaceholder: "Filter skills",
+			skillCountLabel: "Selected",
+			selectNone: "Select none"
 		};
 
 		// ── 远程贡献 ─────────────────────────────────────────────────────────
@@ -394,10 +426,14 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 			]
 		};
 
-// ── 分组编辑对话框（选分组 → 命名 → 选作用域 → 勾选技能）──────────────
+// ── 分组编辑对话框（左侧分组列表，右侧名称/工作区/技能）──────────────
 		function GroupDialog({ t, options, groups, groupId, setGroupId, name, setName, scope, setScope, skills, selected, toggle, selectAll, busy, error, onSave, onDelete, onCancel }) {
 			const known = Array.isArray(options) ? options : [];
 			const rows = Array.isArray(groups) ? groups : [];
+			const [query, setQuery] = react.useState("");
+			const q = query.trim().toLowerCase();
+			const visible = skills.filter((skill) => skill.name.toLowerCase().includes(q));
+			const allChecked = skills.length > 0 && selected.size === skills.length;
 			return (0, react_jsx_runtime.jsx)("div", {
 				className: c.scopeOverlay,
 				role: "dialog",
@@ -405,127 +441,110 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 				children: (0, react_jsx_runtime.jsxs)("div", {
 					className: c.scopeBox,
 					children: [(0, react_jsx_runtime.jsx)("h4", { children: t("groupTitle") }), (0, react_jsx_runtime.jsxs)("div", {
-						className: c.migrateSection,
-						children: [(0, react_jsx_runtime.jsx)("p", { className: c.migrateLabel, children: t("groupTitle") }), (0, react_jsx_runtime.jsxs)("div", {
-							className: c.scopeOptions,
+						className: c.groupBody,
+						children: [(0, react_jsx_runtime.jsxs)("div", {
+							className: c.groupSide,
 							children: [(0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
-								className: c.scopeOption,
-								"data-active": groupId === null ? "true" : void 0,
+								className: c.groupNewBtn,
 								onClick: () => {
 									setGroupId(null, "");
 								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "radio",
-									name: "group-pick",
-									checked: groupId === null,
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", { children: t("groupNew") })]
-							}), ...rows.map((group) => (0, react_jsx_runtime.jsxs)("button", {
+								children: ["+ ", t("groupNew")]
+							}), (0, react_jsx_runtime.jsx)("p", {
+								className: c.groupSideLabel,
+								children: t("groupTitle")
+							}), ...rows.map((group) => (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
-								className: c.scopeOption,
+								className: c.groupSideItem,
 								"data-active": groupId === group.id ? "true" : void 0,
 								onClick: () => {
 									setGroupId(group.id, group.name);
 								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "radio",
-									name: "group-pick",
-									checked: groupId === group.id,
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", {
-									className: c.migrateOptionLabel,
-									children: group.name
-								})]
+								children: group.name
 							}, group.id))]
 						}), (0, react_jsx_runtime.jsxs)("div", {
-							className: c.manualRow,
-							children: [(0, react_jsx_runtime.jsx)("input", {
-								className: c.manualInput,
-								type: "text",
-								value: name,
-								placeholder: t("groupNamePlaceholder"),
-								onChange: (event) => {
-									setName(event.currentTarget.value);
-								}
-							})]
-						})]
-					}), (0, react_jsx_runtime.jsxs)("div", {
-						className: c.migrateSection,
-						children: [(0, react_jsx_runtime.jsx)("p", { className: c.migrateLabel, children: t("groupScope") }), (0, react_jsx_runtime.jsxs)("div", {
-							className: c.scopeOptions,
-							children: [(0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: c.scopeOption,
-								"data-active": scope === "global" ? "true" : void 0,
-								onClick: () => {
-									setScope("global");
-								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "radio",
-									name: "group-scope",
-									checked: scope === "global",
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", { children: t("scopeGlobal") })]
-							}), ...known.map((option) => (0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: c.scopeOption,
-								"data-active": scope === option.path ? "true" : void 0,
-								onClick: () => {
-									setScope(option.path);
-								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "radio",
-									name: "group-scope",
-									checked: scope === option.path,
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", {
-									className: c.migrateOptionLabel,
-									children: option.label
-								}), (0, react_jsx_runtime.jsx)("span", {
-									className: c.wsPath,
-									title: option.path,
-									children: option.path
-								})]
-							}, option.path))]
-						}), (0, react_jsx_runtime.jsxs)("div", {
+							className: c.groupMain,
 							children: [(0, react_jsx_runtime.jsxs)("div", {
-								style: { display: "flex", alignItems: "center", justifyContent: "space-between" },
-								children: [(0, react_jsx_runtime.jsx)("p", {
-									className: c.migrateLabel,
-									children: t("groupSkills") + " · " + skills.length
-								}), (0, react_jsx_runtime.jsx)("button", {
-									type: "button",
-									className: c.migrateSelectAll,
-									onClick: selectAll,
-									children: t("migrateSelectAll")
+								className: c.field,
+								children: [(0, react_jsx_runtime.jsx)("label", {
+									className: c.fieldLabel,
+									children: t("groupName")
+								}), (0, react_jsx_runtime.jsx)("input", {
+									className: c.textInput,
+									type: "text",
+									value: name,
+									placeholder: t("groupNamePlaceholder"),
+									onChange: (event) => {
+										setName(event.currentTarget.value);
+									}
 								})]
-							}), skills.length === 0 ? (0, react_jsx_runtime.jsx)("p", {
-								className: c.migrateHint,
-								children: t("groupNoSkills")
-							}) : (0, react_jsx_runtime.jsxs)("ul", {
-								className: c.migrateList,
-								children: skills.map((skill) => (0, react_jsx_runtime.jsxs)("li", {
-									key: skill.name,
-									children: [(0, react_jsx_runtime.jsxs)("button", {
+							}), (0, react_jsx_runtime.jsxs)("div", {
+								className: c.field,
+								children: [(0, react_jsx_runtime.jsx)("label", {
+									className: c.fieldLabel,
+									children: t("groupScope")
+								}), (0, react_jsx_runtime.jsxs)("select", {
+									className: c.select,
+									value: scope,
+									onChange: (event) => {
+										setScope(event.currentTarget.value);
+									},
+									children: [(0, react_jsx_runtime.jsx)("option", {
+										value: "global",
+										children: t("scopeGlobal")
+									}), ...known.map((option) => (0, react_jsx_runtime.jsx)("option", {
+										value: option.path,
+										children: option.label + " — " + option.path
+									}, option.path))]
+								})]
+							}), (0, react_jsx_runtime.jsxs)("div", {
+								className: c.field,
+								children: [(0, react_jsx_runtime.jsxs)("div", {
+									className: c.countRow,
+									children: [(0, react_jsx_runtime.jsx)("p", {
+										className: c.countText,
+										children: t("skillCountLabel") + " " + selected.size + "/" + skills.length
+									}), (0, react_jsx_runtime.jsx)("button", {
 										type: "button",
-										className: c.migrateItem,
-										onClick: () => {
-											toggle(skill.name);
-										},
+										className: c.migrateSelectAll,
+										onClick: selectAll,
+										children: allChecked ? t("selectNone") : t("migrateSelectAll")
+									})]
+								}), (0, react_jsx_runtime.jsx)("input", {
+									className: c.textInput,
+									type: "text",
+									value: query,
+									placeholder: t("skillFilterPlaceholder"),
+									onChange: (event) => {
+										setQuery(event.currentTarget.value);
+									}
+								}), (0, react_jsx_runtime.jsxs)("div", {
+									className: c.skillListBox,
+									children: skills.length === 0 ? [(0, react_jsx_runtime.jsx)("p", {
+										className: c.migrateHint,
+										children: t("groupNoSkills")
+									}, "no-skills")] : visible.length === 0 ? [(0, react_jsx_runtime.jsx)("p", {
+										className: c.migrateHint,
+										children: t("emptySearch")
+									}, "no-match")] : visible.map((skill) => (0, react_jsx_runtime.jsxs)("label", {
+										className: c.skillRow,
 										children: [(0, react_jsx_runtime.jsx)("input", {
 											type: "checkbox",
 											checked: selected.has(skill.name),
-											readOnly: true
+											onChange: () => {
+												toggle(skill.name);
+											}
 										}), (0, react_jsx_runtime.jsx)("span", {
-											className: c.migrateItemName,
+											className: c.skillName,
 											children: skill.name
 										}), (0, react_jsx_runtime.jsx)("span", {
-											className: c.migrateItemState,
+											className: c.skillBadge,
+											"data-on": skill.enabled !== false ? "true" : "false",
 											children: skill.enabled !== false ? t("enabledTag") : t("disabledTag")
 										})]
-									})]
-								}, skill.name))
+									}, skill.name))
+								})]
 							})]
 						})]
 					}), error !== null && error !== undefined ? (0, react_jsx_runtime.jsx)("p", {
@@ -533,35 +552,41 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 						role: "alert",
 						children: error
 					}) : null, (0, react_jsx_runtime.jsxs)("div", {
-						className: c.scopeActions,
+						className: c.dialogFooter,
 						children: [groupId !== null && groupId !== undefined ? (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
-							className: c.scopeAction + " " + c.scopeCancel,
+							className: c.dangerBtn,
 							disabled: busy,
 							onClick: onDelete,
 							children: t("groupDelete")
-						}) : null, (0, react_jsx_runtime.jsx)("button", {
-							type: "button",
-							className: c.scopeAction + " " + c.scopeCancel,
-							disabled: busy,
-							onClick: onCancel,
-							children: t("migrateCancel")
-						}), (0, react_jsx_runtime.jsx)("button", {
-							type: "button",
-							className: c.scopeAction + " " + c.scopeConfirm,
-							disabled: busy || (name ?? "").trim() === "" || selected.size === 0 || scope === "",
-							onClick: onSave,
-							children: busy ? t("groupSaving") : t("groupSave")
+						}) : (0, react_jsx_runtime.jsx)("span", {}), (0, react_jsx_runtime.jsxs)("div", {
+							className: c.scopeActions,
+							children: [(0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: c.scopeAction + " " + c.scopeCancel,
+								disabled: busy,
+								onClick: onCancel,
+								children: t("migrateCancel")
+							}), (0, react_jsx_runtime.jsx)("button", {
+								type: "button",
+								className: c.scopeAction + " " + c.scopeConfirm,
+								disabled: busy || (name ?? "").trim() === "" || selected.size === 0 || scope === "",
+								onClick: onSave,
+								children: busy ? t("groupSaving") : t("groupSave")
+							})]
 						})]
 					})]
 				})
 			});
 		}
 
-// ── 批量迁移对话框（源/目标均手动选择，目标可多选）──────────────────────
+// ── 批量迁移对话框（源/目标均为下拉表单，目标可多选）───────────────────
 		function MigrateDialog({ t, options, from, setFrom, targets, toggleTarget, mode, setMode, skills, selected, toggle, selectAll, busy, result, error, onConfirm, onCancel, onClose }) {
 			const known = Array.isArray(options) ? options : [];
-			const fromLabel = from === "" ? t("migratePickSource") : from === "global" ? t("scopeGlobal") : from;
+			const [query, setQuery] = react.useState("");
+			const q = query.trim().toLowerCase();
+			const visible = skills.filter((skill) => skill.name.toLowerCase().includes(q));
+			const allChecked = skills.length > 0 && selected.size === skills.length;
 			const okCount = Array.isArray(result) ? result.filter((item) => item.ok === true).length : 0;
 			const failCount = Array.isArray(result) ? result.length - okCount : 0;
 			const targetLabelOf = (value) => (value === null || value === undefined ? t("scopeGlobal") : value === "global" ? t("scopeGlobal") : value);
@@ -572,84 +597,80 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 				children: (0, react_jsx_runtime.jsxs)("div", {
 					className: c.scopeBox,
 					children: [(0, react_jsx_runtime.jsx)("h4", { children: t("migrateTitle") }), (0, react_jsx_runtime.jsxs)("div", {
-						className: c.migrateSection,
-						children: [(0, react_jsx_runtime.jsx)("p", { className: c.migrateLabel, children: t("migrateFrom") }), (0, react_jsx_runtime.jsxs)("div", {
-							className: c.scopeOptions,
-							children: [(0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: c.scopeOption,
-								"data-active": from === "global" ? "true" : void 0,
-								onClick: () => {
-									setFrom("global");
-								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "radio",
-									name: "migrate-from",
-									checked: from === "global",
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", { children: t("scopeGlobal") })]
-							}), ...known.map((option) => (0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: c.scopeOption,
-								"data-active": from === option.path ? "true" : void 0,
-								onClick: () => {
-									setFrom(option.path);
-								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "radio",
-									name: "migrate-from",
-									checked: from === option.path,
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", {
-									className: c.migrateOptionLabel,
-									children: option.label
-								}), (0, react_jsx_runtime.jsx)("span", {
-									className: c.wsPath,
-									title: option.path,
-									children: option.path
-								})]
+						className: c.field,
+						children: [(0, react_jsx_runtime.jsx)("label", {
+							className: c.fieldLabel,
+							children: t("migrateFrom")
+						}), (0, react_jsx_runtime.jsxs)("select", {
+							className: c.select,
+							value: from,
+							onChange: (event) => {
+								setFrom(event.currentTarget.value);
+							},
+							children: [(0, react_jsx_runtime.jsx)("option", {
+								value: "",
+								disabled: true,
+								children: t("migratePickSource")
+							}), (0, react_jsx_runtime.jsx)("option", {
+								value: "global",
+								children: t("scopeGlobal")
+							}), ...known.map((option) => (0, react_jsx_runtime.jsx)("option", {
+								value: option.path,
+								children: option.label + " — " + option.path
 							}, option.path))]
 						})]
 					}), (0, react_jsx_runtime.jsxs)("div", {
-						className: c.migrateSection,
-						children: [(0, react_jsx_runtime.jsx)("p", { className: c.migrateLabel, children: t("migrateTo") }), (0, react_jsx_runtime.jsxs)("div", {
-							className: c.scopeOptions,
-							children: [(0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: c.scopeOption,
-								"data-active": targets.has("global") ? "true" : void 0,
-								onClick: () => {
-									toggleTarget("global");
-								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "checkbox",
-									checked: targets.has("global"),
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", { children: t("scopeGlobal") })]
-							}), ...known.map((option) => (0, react_jsx_runtime.jsxs)("button", {
-								type: "button",
-								className: c.scopeOption,
-								"data-active": targets.has(option.path) ? "true" : void 0,
-								onClick: () => {
-									toggleTarget(option.path);
-								},
-								children: [(0, react_jsx_runtime.jsx)("input", {
-									type: "checkbox",
-									checked: targets.has(option.path),
-									readOnly: true
-								}), (0, react_jsx_runtime.jsx)("span", {
-									className: c.migrateOptionLabel,
-									children: option.label
-								}), (0, react_jsx_runtime.jsx)("span", {
-									className: c.wsPath,
-									title: option.path,
-									children: option.path
-								})]
-							}, option.path))]
-						})]
-					}), (0, react_jsx_runtime.jsxs)("div", {
-						className: c.migrateSection,
-						children: [(0, react_jsx_runtime.jsx)("p", { className: c.migrateLabel, children: t("migrateMode") }), (0, react_jsx_runtime.jsxs)("div", {
+						className: c.field,
+						children: [(0, react_jsx_runtime.jsx)("label", {
+							className: c.fieldLabel,
+							children: t("migrateTo")
+						}), (0, react_jsx_runtime.jsxs)("div", {
+						className: c.targetBox,
+						children: [(0, react_jsx_runtime.jsxs)("button", {
+							type: "button",
+							className: c.targetItem,
+							"data-active": targets.has("global") ? "true" : void 0,
+							onClick: () => {
+								toggleTarget("global");
+							},
+							children: [(0, react_jsx_runtime.jsx)("input", {
+								type: "checkbox",
+								checked: targets.has("global"),
+								readOnly: true
+							}), (0, react_jsx_runtime.jsx)("span", {
+								className: c.skillName,
+								children: t("scopeGlobal")
+							})]
+						}), ...known.map((option) => (0, react_jsx_runtime.jsxs)("button", {
+							type: "button",
+							className: c.targetItem,
+							"data-active": targets.has(option.path) ? "true" : void 0,
+							onClick: () => {
+								toggleTarget(option.path);
+							},
+							children: [(0, react_jsx_runtime.jsx)("input", {
+								type: "checkbox",
+								checked: targets.has(option.path),
+								readOnly: true
+							}), (0, react_jsx_runtime.jsx)("span", {
+								className: c.migrateOptionLabel,
+								children: option.label
+							}), (0, react_jsx_runtime.jsx)("span", {
+								className: c.wsPath,
+								title: option.path,
+								children: option.path
+							})]
+						}, option.path))]
+					})]
+					}), mode === "move" && targets.size > 1 ? (0, react_jsx_runtime.jsx)("p", {
+						className: c.migrateHint,
+						children: t("migrateMoveSingle")
+					}) : null, (0, react_jsx_runtime.jsxs)("div", {
+						className: c.field,
+						children: [(0, react_jsx_runtime.jsx)("p", {
+							className: c.fieldLabel,
+							children: t("migrateMode")
+						}), (0, react_jsx_runtime.jsxs)("div", {
 							className: c.scopeOptions,
 							children: [(0, react_jsx_runtime.jsxs)("button", {
 								type: "button",
@@ -679,46 +700,50 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 								}), (0, react_jsx_runtime.jsx)("span", { children: t("migrateModeCopy") })]
 							})]
 						})]
-					}), from === "" ? (0, react_jsx_runtime.jsx)("p", {
-						className: c.migrateHint,
-						children: t("migratePickSource")
-					}) : result === null ? (0, react_jsx_runtime.jsxs)("div", {
-						className: c.migrateSection,
+					}), from === "" ? null : result === null ? (0, react_jsx_runtime.jsxs)("div", {
+						className: c.field,
 						children: [(0, react_jsx_runtime.jsxs)("div", {
-							style: { display: "flex", alignItems: "center", justifyContent: "space-between" },
+							className: c.countRow,
 							children: [(0, react_jsx_runtime.jsx)("p", {
-								className: c.migrateLabel,
-								children: fromLabel + " · " + skills.length
+								className: c.countText,
+								children: t("skillCountLabel") + " " + selected.size + "/" + skills.length
 							}), (0, react_jsx_runtime.jsx)("button", {
 								type: "button",
 								className: c.migrateSelectAll,
 								onClick: selectAll,
-								children: t("migrateSelectAll")
+								children: allChecked ? t("selectNone") : t("migrateSelectAll")
 							})]
-						}), skills.length === 0 ? (0, react_jsx_runtime.jsx)("p", {
-							className: c.migrateHint,
-							children: t("migrateNoSkills")
-						}) : (0, react_jsx_runtime.jsxs)("ul", {
-							className: c.migrateList,
-							children: skills.map((skill) => (0, react_jsx_runtime.jsxs)("li", {
-								key: skill.name,
-								children: [(0, react_jsx_runtime.jsxs)("button", {
-									type: "button",
-									className: c.migrateItem,
-									onClick: () => {
+						}), (0, react_jsx_runtime.jsx)("input", {
+							className: c.textInput,
+							type: "text",
+							value: query,
+							placeholder: t("skillFilterPlaceholder"),
+							onChange: (event) => {
+								setQuery(event.currentTarget.value);
+							}
+						}), (0, react_jsx_runtime.jsxs)("div", {
+							className: c.skillListBox,
+							children: skills.length === 0 ? [(0, react_jsx_runtime.jsx)("p", {
+								className: c.migrateHint,
+								children: t("migrateNoSkills")
+							}, "no-skills")] : visible.length === 0 ? [(0, react_jsx_runtime.jsx)("p", {
+								className: c.migrateHint,
+								children: t("emptySearch")
+							}, "no-match")] : visible.map((skill) => (0, react_jsx_runtime.jsxs)("label", {
+								className: c.skillRow,
+								children: [(0, react_jsx_runtime.jsx)("input", {
+									type: "checkbox",
+									checked: selected.has(skill.name),
+									onChange: () => {
 										toggle(skill.name);
-									},
-									children: [(0, react_jsx_runtime.jsx)("input", {
-										type: "checkbox",
-										checked: selected.has(skill.name),
-										readOnly: true
-									}), (0, react_jsx_runtime.jsx)("span", {
-										className: c.migrateItemName,
-										children: skill.name
-									}), (0, react_jsx_runtime.jsx)("span", {
-										className: c.migrateItemState,
-										children: skill.enabled !== false ? t("enabledTag") : t("disabledTag")
-									})]
+									}
+								}), (0, react_jsx_runtime.jsx)("span", {
+									className: c.skillName,
+									children: skill.name
+								}), (0, react_jsx_runtime.jsx)("span", {
+									className: c.skillBadge,
+									"data-on": skill.enabled !== false ? "true" : "false",
+									children: skill.enabled !== false ? t("enabledTag") : t("disabledTag")
 								})]
 							}, skill.name))
 						})]
@@ -741,9 +766,6 @@ const css = cssChrome + cssCards + cssAdd + cssScope + cssMigrate + cssUtils + c
 								}, item.name + "-" + (item.target ?? "")))
 							})]
 						}) : null]
-					}) : null, mode === "move" && targets.size > 1 ? (0, react_jsx_runtime.jsx)("p", {
-						className: c.migrateHint,
-						children: t("migrateMoveSingle")
 					}) : null, (0, react_jsx_runtime.jsxs)("div", {
 						className: c.scopeActions,
 						children: result === null ? [(0, react_jsx_runtime.jsx)("button", {
@@ -1255,22 +1277,27 @@ const onPickFolder = (event) => {
 						}, key))
 					}),
 					(0, react_jsx_runtime.jsxs)("div", {
-						className: c.scopeBar,
+						className: c.groupBar,
 						role: "tablist",
-						children: groupKeys.map((key) => (0, react_jsx_runtime.jsxs)("button", {
+						children: groupKeys.map((key) => [(0, react_jsx_runtime.jsx)("span", {
+							className: c.groupSep,
+							"aria-hidden": "true",
+							children: "|"
+						}, "sep-" + key), (0, react_jsx_runtime.jsx)("button", {
 							type: "button",
 							role: "tab",
 							"aria-selected": groupFilter === key,
-							className: c.scopeChip,
+							className: c.groupItem,
 							"data-active": groupFilter === key ? "true" : void 0,
 							onClick: () => {
 								setGroupFilter(key);
 							},
-							children: [key === "all" ? t("groupAll") : key, (0, react_jsx_runtime.jsx)("span", {
-								className: c.scopeChipCount,
-								children: groupCount(key)
-							})]
-						}, key))
+							children: key === "all" ? t("groupAll") : key
+						}, key)]).concat([(0, react_jsx_runtime.jsx)("span", {
+							className: c.groupSep,
+							"aria-hidden": "true",
+							children: "|"
+						}, "sep-end")])
 					}),
 						adding.status === "busy" ? (0, react_jsx_runtime.jsx)("p", {
 							className: c.addStatus,
