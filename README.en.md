@@ -13,7 +13,7 @@ A DSH plugin for managing skills right from the web UI and terminal
 - Management: hot enable/disable switch, delete, search by name; the page refreshes on entry
 - Add skills: choose a single `.md` file or a directory bundle (folder with a top-level `SKILL.md`); invalid content is rejected with a reason
 - **Scoped views** (0.3.0): a skill's files live directly in its scope — global skills in `~/.dsh/skills`, workspace skills in that workspace's `.dsh/skills`. A scope bar below “Skills” (Global + each workspace, horizontally scrollable) filters the list to one scope.
-- **Batch migration**: the button left of “+” batch-copies or batch-moves skills from one scope to another (select all supported; items migrate independently — one failure never aborts the rest).
+- **Batch migration**: the button left of “+” opens a dialog where you pick the source scope, one or more target scopes, and the skills yourself, then batch-**copy** or batch-**move** them (nothing pre-selected; items migrate independently — one failure never aborts the rest; move mode allows a single target).
 
 ## Install
 
