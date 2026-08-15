@@ -31,7 +31,7 @@ A DSH plugin for managing skills right from the web UI and terminal
    > release tarball instead (no git involved, no such restriction):
    >
    > ```bash
-   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.3.0/dsh-skill-viewer-0.3.0.tgz
+   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.3.1/dsh-skill-viewer-0.3.1.tgz
    > ```
 
 2. Restart the gateway
