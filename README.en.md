@@ -1,10 +1,10 @@
 # dsh-skill-viewer
 
-(English|[简体中文](README.md))
+English | [简体中文](README.md)
 
 A DSH plugin for managing skills right from the web UI and terminal
 
-<img width="614" height="625" alt="image" src="https://github.com/user-attachments/assets/2d9bb9d4-6baf-4793-b19c-817c571829f9" />
+<img width="602" height="599" alt="image" src="https://github.com/user-attachments/assets/23aabaf8-b1fa-43a7-8a9e-ea7c2186917e" />
 
 
 ## Features
