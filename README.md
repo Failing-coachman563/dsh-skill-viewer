@@ -28,16 +28,16 @@ DSH 插件，可直接在 web 界面快速管理 skill 状态，同时在终端�
 1. 安装本包（bundle 层自动挂载，无需编辑配置文件）
 
    ```bash
-   dsh plugin --profile web add github:Fishquito7/dsh-skill-viewer
+   dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.3.1/dsh-skill-viewer-0.3.1.tgz
    ```
 
-   > pnpm v11 安全限制：Git 来源的依赖默认禁止运行 prepare 构建脚本。若报
+   > 首选发行版 tarball：不走 Git，不受 pnpm v11 的构建脚本限制。
+   > 也可以从 Git 安装（Git 来源的依赖默认禁止运行 prepare 构建脚本；若报
    > “git-hosted plugins build on install...”，把 pnpm 在上面打印的 key 加到
-   > profile 目录的 `pnpm-workspace.yaml` 的 `allowBuilds` 下再重跑即可；
-   > **或者直接用发行版 tarball 安装（不走 Git，无此限制）：**
+   > profile 目录 `pnpm-workspace.yaml` 的 `allowBuilds` 下再重跑）：
    >
    > ```bash
-   > dsh plugin --profile web add https://github.com/Fishquito7/dsh-skill-viewer/releases/download/v0.3.1/dsh-skill-viewer-0.3.1.tgz
+   > dsh plugin --profile web add github:Fishquito7/dsh-skill-viewer
    > ```
 
 2. 重启网关
