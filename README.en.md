@@ -4,7 +4,8 @@
 
 A DSH plugin for managing skills right from the web UI and terminal
 
-<img width="602" height="599" alt="image" src="https://github.com/user-attachments/assets/6ccb50e5-05ce-4264-97e3-4372d096be3e" />
+<img width="614" height="625" alt="image" src="https://github.com/user-attachments/assets/2d9bb9d4-6baf-4793-b19c-817c571829f9" />
+
 
 ## Features
 
